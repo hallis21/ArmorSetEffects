@@ -1,0 +1,36 @@
+name: Example Set 2
+hidden: true
+armorPieces:
+  - item: GOLDEN_HELMET
+    metadata:
+      - displayName: Kings Crown
+        lore:
+  - item: DIAMOND_CHESTPLATE
+    metadata:
+      - displayName: Kings Chestplate
+        lore:
+  - item: GOLDEN_LEGGINGS
+    metadata: 
+      - displayName: Kings Pantaloons
+        lore:
+  - item: DIAMOND_BOOTS
+    metadata: 
+      - displayName: Kings Crocs
+        lore:
+permanentEffects:
+itemEffects:
+  - item: COAL
+    effects:
+      - effectType: SPEED
+        amplifier: 5
+        duration: 3
+      - effectType: REGENERATION
+        amplifier: 10
+        duration: 2
+    cooldown: 50
+  - item: COOKIE
+    effects:
+      - effectType: SPEED
+        amplifier: 5
+        duration: 10
+    cooldown: 50
