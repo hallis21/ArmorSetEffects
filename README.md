@@ -1,0 +1,2 @@
+# ArmorSetEffects
+Minecraft spigot plugin
