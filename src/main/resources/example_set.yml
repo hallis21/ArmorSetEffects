@@ -1,5 +1,6 @@
-name: Example Set
+name: Example Set 1
 hidden: false
+priority: 1
 armorPieces:
   - item: DIAMOND_HELMET
     metadata:

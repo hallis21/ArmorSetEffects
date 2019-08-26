@@ -17,9 +17,12 @@
 # To make a set without permanent effects simply leave it empty (permanentEffects: )
 # Same goes for item effects ^^
 # Multiple effects can be added to a singe item effect
+# If you have sets that are the same, but where one has metadata, use the priority system to make sure they work in your favor. Higher priority is better.
+# See example 1 and 2 ^^
+# If you have sets that have interchangable slots, make sure to prioritise correctly with similar sets
+# Note: Priority does nothing if the two sets can't be worn at the same time
 
 # Possible, but not reccomended:
-#  - Sets that have only interchangable slots, this will most likely override other sets
 #  - Itemeffects with no item ("item: ") as it will try to enable everytime you rightclick
 #  - Using blocks as items in the itemeffects
 #  - Using the same name for multiple sets, this will break the search function

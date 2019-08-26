@@ -1,7 +1,8 @@
 name: Example Set 2
 hidden: true
+priority: 2
 armorPieces:
-  - item: GOLDEN_HELMET
+  - item: DIAMOND_HELMET
     metadata:
       - displayName: Kings Crown
         lore:
@@ -9,7 +10,7 @@ armorPieces:
     metadata:
       - displayName: Kings Chestplate
         lore:
-  - item: GOLDEN_LEGGINGS
+  - item: DIAMOND_LEGGINGS
     metadata: 
       - displayName: Kings Pantaloons
         lore:

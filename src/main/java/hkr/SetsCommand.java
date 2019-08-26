@@ -18,6 +18,10 @@ class SetsCommand implements CommandExecutor {
             if (args.length == 0) {
                 String toPrint = "Loaded armor sets: ";
                 boolean first = true;
+                if (pl.getArmorSets().size() == 0) {
+                    sender.sendMessage("No sets are currently loaded.");
+                    return true;
+                }
                 for (ArmorSetNew set : pl.getArmorSets()) {
                     if (!set.getHidden() || sender.hasPermission("armorsetbonus.viewsets.all")) {
                         String name = set.getName();

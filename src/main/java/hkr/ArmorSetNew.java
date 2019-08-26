@@ -10,22 +10,36 @@ public class ArmorSetNew {
     private ItemEffect[] itemEffects;
     // Only one null effect allowed / will be added
     private ItemEffect nullEffect;
+    private int priority;
 
     public ArmorSetNew() {
     }
 
-    public ArmorSetNew(String name, boolean hidden, ArmorPiece[] armorPieces, PermanentEffect[] permanentEffects, ItemEffect[] itemEffects) {
+    public ArmorSetNew(String name, boolean hidden, ArmorPiece[] armorPieces, PermanentEffect[] permanentEffects, ItemEffect[] itemEffects, int priority) {
         this.name = name;
         this.hidden = hidden;
         this.armorPieces = armorPieces;
         this.permanentEffects = permanentEffects;
         this.itemEffects = itemEffects;
+        this.priority = priority;
     }
     public boolean hasItemEffect(){
         if (itemEffects != null) {
             return true;
         }
         return false;
+    }
+    /**
+     * @param priority the priority to set
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+    /**
+     * @return the priority
+     */
+    public int getPriority() {
+        return priority;
     }
     public ItemEffect getNullItemEffect() {
         return nullEffect;

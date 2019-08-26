@@ -45,7 +45,8 @@ public static void main(String[] args) {
         File dir = new File(this.getDataFolder()+"\\ArmorSets");
         File[] directoryListing = dir.listFiles();
         getLogger().info("Found folder, reading sets.");
-        if (directoryListing != null) {
+        if (directoryListing != null && directoryListing.length != 0) {
+            getLogger().info("Found "+directoryListing.length+" files to read.");
             for (File child : directoryListing) {
                 try {
                     Yaml yaml = new Yaml();
@@ -55,6 +56,7 @@ public static void main(String[] args) {
                     ArmorSetNew newSet = new ArmorSetNew();
                     newSet.setName((String)newSetObj.get("name"));
                     newSet.setHidden((boolean)newSetObj.get("hidden"));
+                    newSet.setPriority((int)newSetObj.get("priority"));
                     ArmorPiece[] pieces = new ArmorPiece[4];
                     try {
                         List<Map<String, Object>> armorPieces = (List<Map<String, Object>>) newSetObj.get("armorPieces");
@@ -104,7 +106,6 @@ public static void main(String[] args) {
                                 newEffect.fix();
                                 i++;
                             } catch (NullPointerException e) {
-                                PermanentEffect newEffect = null;
                                 i++;
                             }
     
@@ -194,7 +195,10 @@ public static void main(String[] args) {
             }
             getLogger().info("Found sets: "+armorSets.size());
         }
-    }
+        else {
+            getServer().getConsoleSender().sendMessage(ChatColor.RED+"No Files found in folder ArmorSetEffects/ArmorSets");
+            }
+        }
     private void extracted() {
         try {
             checkFiles();
@@ -250,8 +254,8 @@ public static void main(String[] args) {
             f.mkdir();
         }
         File fc = new File(this.getDataFolder() + "/armorSets/");
-        if (!fc.exists()){
-            saveResource("armorSets", false);
+        if (!fc.exists()) {
+            fc.mkdir();
         }
 
         saveResource("example_set.yml", true);
@@ -266,20 +270,19 @@ public static void main(String[] args) {
         
             @Override
             public void run() {
-                ArmorSetNew added = new ArmorSetNew();
+                ArmorSetNew added = null;
+                // Checks all sets and adds the one with the highest priority, higher is better
                 for (ArmorSetNew set : armorSets) {
                     if (playerHas(player, set)) {
-                        removeBonus(player);
-                        addBonus(player, set);
-                        added = set;
-                        break;
+                        if (added == null || set.getPriority() >= added.getPriority()) {
+                            added = set;
+                        }
                     } 
                 }
-                if (activeBonus.containsKey(player)) {
-                    if (activeBonus.get(player) != added) {
-                        removeBonus(player);
-                        
-                    }
+                if (added != null) {
+                    addBonus(player, added);
+                } else {
+                    removeBonus(player);
                 }
             }
         }, 1);
@@ -358,6 +361,9 @@ public static void main(String[] args) {
 
     private void addBonus(Player player, ArmorSetNew set) {
         PermanentEffect[] effects = set.getPermanentEffects();
+        if (activeBonus.containsKey(player) || activeBonus.get(player) != set) {
+            removeBonus(player);
+        }
 
         player.sendMessage("You got an armor set bonus: "+set.getName());
         if (effects != null) {

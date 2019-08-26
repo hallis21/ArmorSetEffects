@@ -16,7 +16,7 @@ commands:
 permissions:
    armorsetbonus.reload:
       description: Allows a player to reload the config file
-      default: false
+      default: true
    armorsetsonus.receive:
       description: Allows a player to receive armor set bonuses
       default: true
