@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +34,7 @@ public class ArmorSetBonusMain extends JavaPlugin
     protected HashMap<Player, Long> lastused = new HashMap<>();
 
 
-public static void main(String[] args) {
-        
-}
+
     @Override
     public void onEnable(){
         extracted();
@@ -42,11 +44,30 @@ public static void main(String[] args) {
     }
 
     private void loadConfigNew(){
-        File dir = new File(this.getDataFolder()+"\\ArmorSets");
-        File[] directoryListing = dir.listFiles();
+        ArrayList<File> directoryListing = new ArrayList<>();
+        ;
+        try {
+            Path dir = Paths.get(this.getDataFolder() + "/ArmorSets");
+            DirectoryStream<Path> dirStream = Files.newDirectoryStream(dir);
+            for (Path path : dirStream) {
+                File newFile = new File(path.toString());
+                directoryListing.add(newFile);
+            }
+        } catch (IOException e1) {
+            getLogger().warning("IOexception, could not load files");
+            e1.printStackTrace();
+            return;
+        }
+        String toprint = "Files found: ";
+
+        for (File file : directoryListing) {
+            toprint += file.getName() + " | ";
+        }
+
         getLogger().info("Found folder, reading sets.");
-        if (directoryListing != null && directoryListing.length != 0) {
-            getLogger().info("Found "+directoryListing.length+" files to read.");
+        getLogger().info(toprint + " (If no files are listed here the plugin has not found any)");
+        if (directoryListing != null && directoryListing.size() != 0) {
+            getLogger().info("Found " + directoryListing.size() + " files to read.");
             for (File child : directoryListing) {
                 try {
                     Yaml yaml = new Yaml();
@@ -54,23 +75,24 @@ public static void main(String[] args) {
                     file = new FileInputStream(child);
                     Map<String, Object> newSetObj = yaml.load(file);
                     ArmorSetNew newSet = new ArmorSetNew();
-                    newSet.setName((String)newSetObj.get("name"));
-                    newSet.setHidden((boolean)newSetObj.get("hidden"));
-                    newSet.setPriority((int)newSetObj.get("priority"));
+                    newSet.setName((String) newSetObj.get("name"));
+                    newSet.setHidden((boolean) newSetObj.get("hidden"));
+                    newSet.setPriority((int) newSetObj.get("priority"));
                     ArmorPiece[] pieces = new ArmorPiece[4];
                     try {
-                        List<Map<String, Object>> armorPieces = (List<Map<String, Object>>) newSetObj.get("armorPieces");
+                        List<Map<String, Object>> armorPieces = (List<Map<String, Object>>) newSetObj
+                                .get("armorPieces");
                         boolean empty = true;
                         for (int i = 0; i < 4; i++) {
                             try {
                                 Map<String, Object> peiceData = armorPieces.get(i);
                                 ArmorPiece newPiece = new ArmorPiece();
-                                newPiece.setItem(((String)peiceData.get("item")).trim());
+                                newPiece.setItem(((String) peiceData.get("item")).trim());
                                 List<Map<String, Object>> tempT = (List<Map<String, Object>>) peiceData.get("metadata");
-                                Map<String, Object> temp = (Map<String, Object>)tempT.get(0);
+                                Map<String, Object> temp = (Map<String, Object>) tempT.get(0);
                                 String[] tempMeta = new String[2];
-                                tempMeta[0] = (String)temp.get("displayName");
-                                tempMeta[1] = (String)temp.get("lore");
+                                tempMeta[0] = (String) temp.get("displayName");
+                                tempMeta[1] = (String) temp.get("lore");
                                 newPiece.setMetadata(tempMeta);
                                 pieces[i] = newPiece;
                                 empty = false;
@@ -79,37 +101,39 @@ public static void main(String[] args) {
                             }
                         }
                         if (empty) {
-                            getServer().getConsoleSender().sendMessage(ChatColor.RED + newSet.getName()+ ": Armor set loaded with no chosen armor slots, this will interfere with all other armor sets");
+                            getServer().getConsoleSender().sendMessage(ChatColor.RED + newSet.getName()
+                                    + ": Armor set loaded with no chosen armor slots, this will interfere with all other armor sets");
                         }
-                        
+
                     } catch (NullPointerException e) {
                         // Empty set if no items are assigned
                         for (int i = 0; i < 4; i++) {
                             pieces[i] = new ArmorPiece();
                         }
-                        getServer().getConsoleSender().sendMessage(ChatColor.RED + newSet.getName()+ ": Armor set loaded with no chosen armor slots, this will interfere with all other armor sets");
+                        getServer().getConsoleSender().sendMessage(ChatColor.RED + newSet.getName()
+                                + ": Armor set loaded with no chosen armor slots, this will interfere with all other armor sets");
                     }
 
                     newSet.setArmorPieces(pieces);
                     // If there are no effects the list will be empty and not castable to a list
                     try {
-                        List<Map<String, Object>> permEffects = (List<Map<String, Object>>) newSetObj.get("permanentEffects");
+                        List<Map<String, Object>> permEffects = (List<Map<String, Object>>) newSetObj
+                                .get("permanentEffects");
                         PermanentEffect[] permanentEffects = new PermanentEffect[permEffects.size()];
                         int i = 0;
                         for (Map<String, Object> effect : permEffects) {
                             // If parsing permEffects fails it will be null
                             try {
                                 PermanentEffect newEffect = new PermanentEffect();
-                                newEffect.setEffectType((String)effect.get("effectType"));
-                                newEffect.setAmplifier((Integer)effect.get("amplifier"));
+                                newEffect.setEffectType((String) effect.get("effectType"));
+                                newEffect.setAmplifier((Integer) effect.get("amplifier"));
                                 permanentEffects[i] = newEffect;
                                 newEffect.fix();
                                 i++;
                             } catch (NullPointerException e) {
                                 i++;
                             }
-    
-                            
+
                         }
                         // If all elements are null it does not add the array, null
                         for (PermanentEffect permE : permanentEffects) {
@@ -118,13 +142,13 @@ public static void main(String[] args) {
                                 break;
                             }
                         }
-                        
+
                     } catch (ClassCastException | NullPointerException e) {
-                       newSet.setPermanentEffects(null);
+                        newSet.setPermanentEffects(null);
                     }
 
                     try {
-                        
+
                         List<Map<String, Object>> itemE = (List<Map<String, Object>>) newSetObj.get("itemEffects");
                         ItemEffect[] itemEffects = new ItemEffect[itemE.size()];
                         int i = 0;
@@ -132,17 +156,18 @@ public static void main(String[] args) {
                             // If the item cannot be initialized it will simply be null
                             try {
                                 ItemEffect newItemEffect = new ItemEffect();
-                                String itemName =(String)itemEffect.get("item");
+                                String itemName = (String) itemEffect.get("item");
                                 if (itemName == "null" || itemName == null) {
                                     newItemEffect.setItem(null);
-                                } else{
+                                } else {
                                     newItemEffect.setItem(itemName);
                                 }
-                                newItemEffect.setMetadata((String)itemEffect.get("metadata"));
-                                List<Map<String, Object>> effects = (List<Map<String, Object>>) itemEffect.get("effects");
+                                newItemEffect.setMetadata((String) itemEffect.get("metadata"));
+                                List<Map<String, Object>> effects = (List<Map<String, Object>>) itemEffect
+                                        .get("effects");
                                 try {
-                                    newItemEffect.setCooldown((int)itemEffect.get("cooldown"));
-                                    
+                                    newItemEffect.setCooldown((int) itemEffect.get("cooldown"));
+
                                 } catch (Exception e) {
                                     int l = 15;
                                     newItemEffect.setCooldown(l);
@@ -150,26 +175,30 @@ public static void main(String[] args) {
                                 PotionEffect[] effectsList = new PotionEffect[itemEffect.size()];
                                 int y = 0;
                                 for (Map<String, Object> effect : effects) {
-                                    // If there are no effects to add it throws a nullpointer and adds confusion for 0 seconds
+                                    // If there are no effects to add it throws a nullpointer and adds confusion for
+                                    // 0 seconds
                                     try {
                                         String type = (String) effect.get("effectType");
-                                        int amp = (int)effect.get("amplifier");
-                                        int duration = (int)effect.get("duration")*20;
-                                        effectsList[y] = new PotionEffect(PotionEffectType.getByName(type), duration, amp);
+                                        int amp = (int) effect.get("amplifier");
+                                        int duration = (int) effect.get("duration") * 20;
+                                        effectsList[y] = new PotionEffect(PotionEffectType.getByName(type), duration,
+                                                amp);
                                         if (effectsList[y] == null) {
-                                            effectsList[y] = new PotionEffect(PotionEffectType.getByName("CONFUSION"), 0, 0);
+                                            effectsList[y] = new PotionEffect(PotionEffectType.getByName("CONFUSION"),
+                                                    0, 0);
                                             getLogger().info("Error parsing itemeffects");
                                         }
                                         y++;
-                                        
+
                                     } catch (NullPointerException e) {
-                                        effectsList[y] = new PotionEffect(PotionEffectType.getByName("CONFUSION"), 0, 0);
+                                        effectsList[y] = new PotionEffect(PotionEffectType.getByName("CONFUSION"), 0,
+                                                0);
                                     }
                                 }
                                 newItemEffect.setEffects(effectsList);
                                 itemEffects[i] = newItemEffect;
                                 i++;
-                                
+
                             } catch (NullPointerException e) {
                                 itemEffects[i] = null;
                                 i++;
@@ -185,20 +214,19 @@ public static void main(String[] args) {
                         newSet.setItemEffects(null);
                     }
                     armorSets.add(newSet);
-                           
-                    
+
                 } catch (Exception e) {
-                    getServer().getConsoleSender().sendMessage(ChatColor.RED + child.getName()+": Incorrect format.");
+                    getServer().getConsoleSender().sendMessage(ChatColor.RED + child.getName() + ": Incorrect format.");
                     e.printStackTrace();
                 }
-                
+
             }
-            getLogger().info("Found sets: "+armorSets.size());
+            getLogger().info("Found sets: " + armorSets.size());
+        } else {
+            getServer().getConsoleSender()
+                    .sendMessage(ChatColor.RED + "No Files found in folder ArmorSetEffects/ArmorSets");
         }
-        else {
-            getServer().getConsoleSender().sendMessage(ChatColor.RED+"No Files found in folder ArmorSetEffects/ArmorSets");
-            }
-        }
+    }
     private void extracted() {
         try {
             checkFiles();

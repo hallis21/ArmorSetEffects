@@ -1,7 +1,7 @@
 name: ArmorSetBonus
-version: 2.0
+version: 2.2.1
 main: hkr.ArmorSetBonusMain
-api-version: 1.13
+api-version: 1.15
 author: hallis21
 commands:
    armor-reload:

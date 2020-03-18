@@ -26,7 +26,7 @@ class SetsCommand implements CommandExecutor {
                     if (!set.getHidden() || sender.hasPermission("armorsetbonus.viewsets.all")) {
                         String name = set.getName();
                         if (!first) {
-                            name += ", "+name;
+                            toPrint += ", "+name;
                         } else { 
                             toPrint += name;
                         }
@@ -36,6 +36,7 @@ class SetsCommand implements CommandExecutor {
                 sender.sendMessage(toPrint);
             } else {
                 if (sender.hasPermission("armorsetbonus.viewsets.inspect")) {
+                    boolean found = false;
                     for (ArmorSetNew set : pl.getArmorSets()) {
                         String name = set.getName();
                         boolean yup = true;
@@ -47,11 +48,14 @@ class SetsCommand implements CommandExecutor {
                         
                         if (yup && (!set.getHidden() || sender.hasPermission("armorsetbonus.viewsets.inspect.all"))) {
                             sender.sendMessage(set.toString());
+                            found = true;
                             break;
-                        } else {
-                            sender.sendMessage("That set does not exist or is hidden.");
                         }
                     }
+                    if(!found) {
+                        sender.sendMessage("This set does not exist or is hidden!");
+                    }
+
                 } else {
                     return false;
                 }
