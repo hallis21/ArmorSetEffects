@@ -13,7 +13,7 @@
 # If you want a set to have interchangable pieces (any piece can be equipped in its place) just leave the space empty like this "item: "
 # If you want sets to be hidden from /armor-list, set hidded to true (permissions to see all are defualt)
 # Lore can be added and searched for, but you need seperate plugins / scripts to add lore to an item
-# displayName is the name of the item, it can be set using an Anvil (meaning it can be achived in survival)
+# displayName is the name of the item, it can be set using an Anvil (meaning it can be done in survival)
 # To make a set without permanent effects simply leave it empty (permanentEffects: )
 # Same goes for item effects ^^
 # Multiple effects can be added to a singe item effect
@@ -21,11 +21,12 @@
 # See example 1 and 2 ^^
 # If you have sets that have interchangable slots, make sure to prioritise correctly with similar sets
 # Note: Priority does nothing if the two sets can't be worn at the same time
+# You can add permissions to each set (permission: exampleSetOne), when adding permissions to players use "armorsetbonus.sets.{yourPermission}"
 
 # Possible, but not reccomended:
 #  - Itemeffects with no item ("item: ") as it will try to enable everytime you rightclick
 #  - Using blocks as items in the itemeffects
-#  - Using the same name for multiple sets, this will break the search function
+#  - Using the same name for multiple sets
 
 # To find item names and potion effect types use:
 # Do NOT use legacy items (LEGACY_DIAMOND_BOOTS)

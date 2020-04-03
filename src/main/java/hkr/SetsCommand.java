@@ -38,13 +38,14 @@ class SetsCommand implements CommandExecutor {
                     boolean found = false;
                     for (ArmorSetNew set : pl.getArmorSets()) {
                         String name = set.getName();
-                        for (String str : args) {
-                            if (name.toLowerCase().contains(str.toLowerCase())) {
-                                yup = true;
-                            }
-                        }                   
-                        
-                        if (yup && (!set.getHidden() || sender.hasPermission("armorsetbonus.viewsets.inspect.all"))) {
+                        if(sender.hasPermission("armorsetbonus.sets."+set.getPermission())){
+                            for (String str : args) {
+                                if (name.toLowerCase().contains(str.toLowerCase())) {
+                                    found = true;
+                                }
+                            }                   
+                        }
+                        if (found && (!set.getHidden() || sender.hasPermission("armorsetbonus.viewsets.inspect.all"))) {
                             sender.sendMessage(set.toString());
                             found = true;
                             break;

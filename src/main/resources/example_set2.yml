@@ -1,5 +1,6 @@
 name: Example Set 2
 hidden: true
+permission:
 priority: 2
 armorPieces:
   - item: DIAMOND_HELMET

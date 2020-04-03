@@ -7,9 +7,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 import hkr.ArmorEquipEventFiles.ArmorEquipEvent;
@@ -74,6 +76,7 @@ class ArmorEquipListener implements Listener {
 
     }
     
+    // Used for item usage
     private boolean lastChecked(Player player) {
         if (!pl.lastused.containsKey(player)) {
             pl.lastused.put(player, System.currentTimeMillis());
@@ -125,5 +128,16 @@ class ArmorEquipListener implements Listener {
         pl.removeBonus(event.getPlayer());
     }
 
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        pl.removeBonus(event.getEntity().getPlayer());
+    }
+
+    @EventHandler
+    public void onSpawn(PlayerRespawnEvent event) {
+        pl.checkForBonus(event.getPlayer());
+    }
+    
 
 }

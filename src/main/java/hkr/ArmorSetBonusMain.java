@@ -78,6 +78,7 @@ public class ArmorSetBonusMain extends JavaPlugin
                     newSet.setName((String) newSetObj.get("name"));
                     newSet.setHidden((boolean) newSetObj.get("hidden"));
                     newSet.setPriority((int) newSetObj.get("priority"));
+                    newSet.setPermission((String) newSetObj.get("permission"));
                     ArmorPiece[] pieces = new ArmorPiece[4];
                     try {
                         List<Map<String, Object>> armorPieces = (List<Map<String, Object>>) newSetObj
@@ -294,6 +295,8 @@ public class ArmorSetBonusMain extends JavaPlugin
     }
 	public void checkForBonus(Player ply) {
         final Player player = ply;
+        // Waits one tick before checking for bonus
+        // Simply allows the server to update on all fronts before checking
         getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable(){
         
             @Override
@@ -318,6 +321,11 @@ public class ArmorSetBonusMain extends JavaPlugin
 
     private boolean playerHas(Player player, ArmorSetNew Aset) {
         int i = 0;
+        if (Aset.getPermission() != null && !player.hasPermission("armorsetbonus.sets."+Aset.getPermission())) {
+            return false;
+        }
+
+
         for (ArmorPiece a : Aset.getArmorPieces()) {
             ItemStack pItem = player.getInventory().getArmorContents()[3-i];
             if (a.getItem() != null) {

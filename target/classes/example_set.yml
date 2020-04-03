@@ -1,5 +1,6 @@
 name: Example Set 1
 hidden: false
+permission: exOne
 priority: 1
 armorPieces:
   - item: DIAMOND_HELMET

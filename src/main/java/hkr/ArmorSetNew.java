@@ -11,6 +11,7 @@ public class ArmorSetNew {
     // Only one null effect allowed / will be added
     private ItemEffect nullEffect;
     private int priority;
+    private String permission;
 
     public ArmorSetNew() {
     }
@@ -28,6 +29,18 @@ public class ArmorSetNew {
             return true;
         }
         return false;
+    }
+    /**
+     * @return the permission
+     */
+    public String getPermission() {
+        return permission;
+    }
+    /**
+     * @param permission the permission to set
+     */
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
     /**
      * @param priority the priority to set

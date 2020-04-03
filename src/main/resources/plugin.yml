@@ -32,3 +32,6 @@ permissions:
    armorsetbonus.viewsets.inspect.all:
       description: Allows a player to inspect ALL sets
       default: true
+   armorsetbonus.sets.exOne:
+      description: Allows all players to use Example Set 1
+      default: true
