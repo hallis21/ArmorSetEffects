@@ -48,6 +48,15 @@ public class ArmorSetBonusMain extends JavaPlugin
         ;
         try {
             Path dir = Paths.get(this.getDataFolder() + "/ArmorSets");
+            if(!Files.exists(dir)){
+                try {
+                    checkFiles();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    getServer().getConsoleSender()
+                            .sendMessage(ChatColor.RED + "Error checking files. If this persists try manually creating these folders: plugins/ArmorSetEffects/ArmorSets");
+                }
+            }
             DirectoryStream<Path> dirStream = Files.newDirectoryStream(dir);
             for (Path path : dirStream) {
                 File newFile = new File(path.toString());
@@ -65,7 +74,9 @@ public class ArmorSetBonusMain extends JavaPlugin
         }
 
         getLogger().info("Found folder, reading sets.");
-        getLogger().info(toprint + " (If no files are listed here the plugin has not found any)");
+        String temps = "(If no files are listed here the plugin has not found any)";
+        if(!toprint.equals("Files found: ")) {temps = "";}
+        getLogger().info(toprint + temps);
         if (directoryListing != null && directoryListing.size() != 0) {
             getLogger().info("Found " + directoryListing.size() + " files to read.");
             for (File child : directoryListing) {
@@ -231,11 +242,12 @@ public class ArmorSetBonusMain extends JavaPlugin
     private void extracted() {
         try {
             checkFiles();
+            loadConfigNew();
         } catch (IOException e) {
             getLogger().info("Error checking files");
             e.printStackTrace();
         }
-            loadConfigNew();
+            
 
     
 
@@ -258,6 +270,7 @@ public class ArmorSetBonusMain extends JavaPlugin
             loadConfigNew();
         } catch (Exception e) {
             getLogger().warning("Invalid config file(s).");
+            e.printStackTrace();
             return false;
         }
         updateAll();
@@ -278,13 +291,13 @@ public class ArmorSetBonusMain extends JavaPlugin
 
     private void checkFiles() throws IOException {
         saveDefaultConfig();
-        File f = new File(this.getDataFolder() + "/");
-        if (!f.exists()) {
-            f.mkdir();
+        Path f = Paths.get(this.getDataFolder().toURI());
+        if (!Files.exists(f)) {
+            Files.createDirectories(f);
         }
-        File fc = new File(this.getDataFolder() + "/armorSets/");
-        if (!fc.exists()) {
-            fc.mkdir();
+        Path fc = Paths.get(this.getDataFolder() + "/ArmorSets");
+        if (!Files.exists(fc)) {
+            Files.createDirectories(fc);
         }
 
         saveResource("example_set.yml", true);
