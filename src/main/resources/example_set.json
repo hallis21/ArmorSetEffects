@@ -1,0 +1,90 @@
+{
+  "name": "Example Set 1",
+  "hidden": false,
+  "permission": "exOne",
+  "priority": 1,
+  "armorPieces": [
+    {
+      "item": "DIAMOND_HELMET",
+      "metadata": 
+        {
+          "displayName": null,
+          "lore": null
+        }
+      
+    },
+    {
+      "item": "DIAMOND_CHESTPLATE",
+      "metadata": 
+        {
+          "displayName": null,
+          "lore": null
+        }
+      
+    },
+    {
+      "item": "DIAMOND_LEGGINGS",
+      "metadata": 
+        {
+          "displayName": null,
+          "lore": null
+        }
+      
+    },
+    {
+      "item": "DIAMOND_BOOTS",
+      "metadata": 
+        {
+          "displayName": null,
+          "lore": null
+        }
+      
+    }
+  ],
+  "permanentEffects": [
+    {
+      "effectType": "FIRE_RESISTANCE",
+      "amplifier": 5
+    },
+    {
+      "effectType": "SPEED",
+      "amplifier": 0
+    }
+  ],
+  "itemEffects": [
+    {
+      "item": "SUGAR_CANE",
+      "metadata": "test",
+      "effects": [
+        {
+          "effectType": "SPEED",
+          "amplifier": 5,
+          "duration": 3
+        },
+        {
+          "effectType": "REGENERATION",
+          "amplifier": 10,
+          "duration": 2
+        }
+      ],
+      "cooldown": 5
+    },
+    {
+      "item": "COOKIE",
+      "metadata":"test",
+      "effects": [
+        {
+          "effectType": "SPEED",
+          "amplifier": 5,
+          "duration": 10
+        },
+        {
+          "effectType": "REGENERATION",
+          "amplifier": 5,
+          "duration": 10
+        }
+      ],
+      "cooldown": 5
+    }
+  ]
+}

@@ -6,10 +6,11 @@
 # Mutliple examples are included, use the format used in those
 
 # One set per file, do not use the same file
+# Use the JSON format shown in the examples
 # Cooldown and duration of itemeffects are in seconds
 # PotionEffect amplifiers start at 0
-# If the effectType is wrong it will be ignored
-# If you want a set to contain empty slots (no piece can be equipped in its place)  use AIR, like this "item: AIR" 
+# If the effectType is invalid it will be ignored
+# If you want a set to contain empty slots (no piece can be equipped in its place)  use AIR, like this 'item: "AIR"' 
 # If you want a set to have interchangable pieces (any piece can be equipped in its place) just leave the space empty like this "item: "
 # If you want sets to be hidden from /armor-list, set hidded to true (permissions to see all are defualt)
 # Lore can be added and searched for, but you need seperate plugins / scripts to add lore to an item

@@ -13,7 +13,7 @@ public class ArmorPiece {
        this.metadata = metadata;
     }
     public String toString(){
-        return item.toString();
+        return item.toString()+"\n    Name: "+ metadata[0]+"\n    Lore: "+metadata[1];
     }
 
     /**

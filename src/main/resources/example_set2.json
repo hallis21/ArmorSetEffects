@@ -1,0 +1,74 @@
+{
+  "name": "Example Set 2",
+  "hidden": true,
+  "permission": null,
+  "priority": 2,
+  "armorPieces": [
+    {
+      "item": "DIAMOND_HELMET",
+      "metadata": 
+        {
+          "displayName": "Kings Crown",
+          "lore": null
+        }
+      
+    },
+    {
+      "item": "DIAMOND_CHESTPLATE",
+      "metadata": 
+        {
+          "displayName": "Kings Chestplate",
+          "lore": null
+        }
+      
+    },
+    {
+      "item": "DIAMOND_LEGGINGS",
+      "metadata": 
+        {
+          "displayName": "Kings Pantaloons",
+          "lore": null
+        }
+      
+    },
+    {
+      "item": "DIAMOND_BOOTS",
+      "metadata": 
+        {
+          "displayName": "Kings Crocs",
+          "lore": null
+        }
+      
+    }
+  ],
+  "permanentEffects": [],
+  "itemEffects": [
+    {
+      "item": "COAL",
+      "effects": [
+        {
+          "effectType": "SPEED",
+          "amplifier": 5,
+          "duration": 3
+        },
+        {
+          "effectType": "REGENERATION",
+          "amplifier": 10,
+          "duration": 2
+        }
+      ],
+      "cooldown": 50
+    },
+    {
+      "item": "COOKIE",
+      "effects": [
+        {
+          "effectType": "SPEED",
+          "amplifier": 5,
+          "duration": 10
+        }
+      ],
+      "cooldown": 50
+    }
+  ]
+}

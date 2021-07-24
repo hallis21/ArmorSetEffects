@@ -28,7 +28,7 @@ public class ItemEffect {
      * @param cooldown the cooldown to set
      */
     public void setCooldown(int cooldown) {
-        this.cooldown = new Long(cooldown);
+        this.cooldown = (long) cooldown;
     }
     /**
      * @param effects the effects to set

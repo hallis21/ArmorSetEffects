@@ -4,14 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.yaml.snakeyaml.Yaml;
 
 import hkr.ArmorEquipEventFiles.ArmorListener;
 import hkr.ArmorEquipEventFiles.DispenserArmorListener;
@@ -37,7 +40,7 @@ public class ArmorSetBonusMain extends JavaPlugin
 
     @Override
     public void onEnable(){
-        extracted();
+        start();
     }
     public ArrayList<ArmorSetNew> getArmorSets() {
         return armorSets;
@@ -47,7 +50,7 @@ public class ArmorSetBonusMain extends JavaPlugin
         ArrayList<File> directoryListing = new ArrayList<>();
         ;
         try {
-            Path dir = Paths.get(this.getDataFolder() + "/ArmorSets");
+            Path dir = Paths.get(this.getDataFolder() + "/armorsets");
             if(!Files.exists(dir)){
                 try {
                     checkFiles();
@@ -81,30 +84,46 @@ public class ArmorSetBonusMain extends JavaPlugin
             getLogger().info("Found " + directoryListing.size() + " files to read.");
             for (File child : directoryListing) {
                 try {
-                    Yaml yaml = new Yaml();
+
+
+
                     InputStream file;
                     file = new FileInputStream(child);
-                    Map<String, Object> newSetObj = yaml.load(file);
+                    // JsonReader jsonReader = new JsonReader(new InputStreamReader(file));
+                    JsonObject jp = new JsonParser().parse(new InputStreamReader(file)).getAsJsonObject();
+
+                    
                     ArmorSetNew newSet = new ArmorSetNew();
-                    newSet.setName((String) newSetObj.get("name"));
-                    newSet.setHidden((boolean) newSetObj.get("hidden"));
-                    newSet.setPriority((int) newSetObj.get("priority"));
-                    newSet.setPermission((String) newSetObj.get("permission"));
+                    newSet.setName(jp.get("name").getAsString());
+                    newSet.setHidden(jp.get("hidden").getAsBoolean());
+                    newSet.setPriority(jp.get("priority").getAsInt());
+                    if (!jp.get("permission").isJsonNull()) {
+                        newSet.setPermission(jp.get("permission").getAsString());
+                    }
+
+
                     ArmorPiece[] pieces = new ArmorPiece[4];
                     try {
-                        List<Map<String, Object>> armorPieces = (List<Map<String, Object>>) newSetObj
-                                .get("armorPieces");
+                        JsonArray armorPieces = jp.get("armorPieces").getAsJsonArray();
                         boolean empty = true;
                         for (int i = 0; i < 4; i++) {
                             try {
-                                Map<String, Object> peiceData = armorPieces.get(i);
+                                JsonObject pieceData = armorPieces.get(i).getAsJsonObject();
                                 ArmorPiece newPiece = new ArmorPiece();
-                                newPiece.setItem(((String) peiceData.get("item")).trim());
-                                List<Map<String, Object>> tempT = (List<Map<String, Object>>) peiceData.get("metadata");
-                                Map<String, Object> temp = (Map<String, Object>) tempT.get(0);
+                                newPiece.setItem((pieceData.get("item").getAsString()).trim());
                                 String[] tempMeta = new String[2];
-                                tempMeta[0] = (String) temp.get("displayName");
-                                tempMeta[1] = (String) temp.get("lore");
+                                // Add metadata if present
+                                if (!pieceData.get("metadata").isJsonNull()){
+                                    JsonObject meta = pieceData.get("metadata").getAsJsonObject();
+
+                                    if (!meta.get("displayName").isJsonNull()){
+                                        tempMeta[0] = (String) meta.get("displayName").getAsString();
+                                    }
+                                    if (!meta.get("lore").isJsonNull()) {
+                                        tempMeta[1] = (String) meta.get("lore").getAsString();
+                                    }
+                                }
+
                                 newPiece.setMetadata(tempMeta);
                                 pieces[i] = newPiece;
                                 empty = false;
@@ -129,16 +148,20 @@ public class ArmorSetBonusMain extends JavaPlugin
                     newSet.setArmorPieces(pieces);
                     // If there are no effects the list will be empty and not castable to a list
                     try {
-                        List<Map<String, Object>> permEffects = (List<Map<String, Object>>) newSetObj
-                                .get("permanentEffects");
+                        JsonArray permEffects = new JsonArray();
+                        if (jp.get("permanentEffects").isJsonArray()){
+                            permEffects = jp.get("permanentEffects").getAsJsonArray();
+                        }
                         PermanentEffect[] permanentEffects = new PermanentEffect[permEffects.size()];
                         int i = 0;
-                        for (Map<String, Object> effect : permEffects) {
+                        for (JsonElement eff : permEffects) {
                             // If parsing permEffects fails it will be null
+                            JsonObject effect = eff.getAsJsonObject();
+
                             try {
                                 PermanentEffect newEffect = new PermanentEffect();
-                                newEffect.setEffectType((String) effect.get("effectType"));
-                                newEffect.setAmplifier((Integer) effect.get("amplifier"));
+                                newEffect.setEffectType(effect.get("effectType").getAsString());
+                                newEffect.setAmplifier(effect.get("amplifier").getAsInt());
                                 permanentEffects[i] = newEffect;
                                 newEffect.fix();
                                 i++;
@@ -160,39 +183,47 @@ public class ArmorSetBonusMain extends JavaPlugin
                     }
 
                     try {
-
-                        List<Map<String, Object>> itemE = (List<Map<String, Object>>) newSetObj.get("itemEffects");
+                        JsonArray itemE = new JsonArray();
+                        if (jp.get("itemEffects").isJsonArray()) {
+                            itemE = jp.get("itemEffects").getAsJsonArray();
+                        }
                         ItemEffect[] itemEffects = new ItemEffect[itemE.size()];
                         int i = 0;
-                        for (Map<String, Object> itemEffect : itemE) {
+                        for (JsonElement itemEff : itemE) {
                             // If the item cannot be initialized it will simply be null
+                            JsonObject itemEffect = itemEff.getAsJsonObject();
                             try {
                                 ItemEffect newItemEffect = new ItemEffect();
-                                String itemName = (String) itemEffect.get("item");
+                                String itemName = itemEffect.get("item").getAsString();
                                 if (itemName == "null" || itemName == null) {
                                     newItemEffect.setItem(null);
                                 } else {
                                     newItemEffect.setItem(itemName);
                                 }
-                                newItemEffect.setMetadata((String) itemEffect.get("metadata"));
-                                List<Map<String, Object>> effects = (List<Map<String, Object>>) itemEffect
-                                        .get("effects");
+                                // Unused
+                                // newItemEffect.setMetadata(itemEffect.get("metadata").getAsString());
+
+                                JsonArray effects = new JsonArray();
+                                if (itemEffect.get("effects").isJsonArray()){
+                                    effects = itemEffect.get("effects").getAsJsonArray();
+                                }
                                 try {
-                                    newItemEffect.setCooldown((int) itemEffect.get("cooldown"));
+                                    newItemEffect.setCooldown(itemEffect.get("cooldown").getAsInt());
 
                                 } catch (Exception e) {
                                     int l = 15;
                                     newItemEffect.setCooldown(l);
                                 }
-                                PotionEffect[] effectsList = new PotionEffect[itemEffect.size()];
+                                PotionEffect[] effectsList = new PotionEffect[effects.size()];
                                 int y = 0;
-                                for (Map<String, Object> effect : effects) {
+                                for (JsonElement eff : effects) {
                                     // If there are no effects to add it throws a nullpointer and adds confusion for
                                     // 0 seconds
+                                    JsonObject effect = eff.getAsJsonObject();
                                     try {
-                                        String type = (String) effect.get("effectType");
-                                        int amp = (int) effect.get("amplifier");
-                                        int duration = (int) effect.get("duration") * 20;
+                                        String type = effect.get("effectType").getAsString();
+                                        int amp = effect.get("amplifier").getAsInt();
+                                        int duration = effect.get("duration").getAsInt() * 20;
                                         effectsList[y] = new PotionEffect(PotionEffectType.getByName(type), duration,
                                                 amp);
                                         if (effectsList[y] == null) {
@@ -239,7 +270,7 @@ public class ArmorSetBonusMain extends JavaPlugin
                     .sendMessage(ChatColor.RED + "No Files found in folder ArmorSetEffects/ArmorSets");
         }
     }
-    private void extracted() {
+    private void start() {
         try {
             checkFiles();
             loadConfigNew();
@@ -295,14 +326,14 @@ public class ArmorSetBonusMain extends JavaPlugin
         if (!Files.exists(f)) {
             Files.createDirectories(f);
         }
-        Path fc = Paths.get(this.getDataFolder() + "/ArmorSets");
+        Path fc = Paths.get(this.getDataFolder() + "/armorsets");
         if (!Files.exists(fc)) {
             Files.createDirectories(fc);
         }
 
-        saveResource("example_set.yml", true);
-        saveResource("example_set2.yml", true);
-        saveResource("example_set3.yml", true);
+        saveResource("example_set.json", true);
+        saveResource("example_set2.json", true);
+        saveResource("example_set3.json", true);
         saveResource("README.txt", true);
 
     }

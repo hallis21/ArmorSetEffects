@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -15,12 +16,16 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 
 import hkr.ArmorEquipEventFiles.ArmorEquipEvent.EquipMethod;
 
 /**
  * @author Arnah
  * @since Jul 30, 2015
+ * 
+ * Updated by hallis21
+ * @at Jul 23, 2021
  */
 public class ArmorListener implements Listener{
 
@@ -29,8 +34,9 @@ public class ArmorListener implements Listener{
 	public ArmorListener(List<String> blockedMaterials){
 		this.blockedMaterials = blockedMaterials;
 	}
+	//Event Priority is highest because other plugins might cancel the events before we check.
 
-	@EventHandler
+	@EventHandler(priority =  EventPriority.HIGHEST, ignoreCancelled = true)
 	public final void inventoryClick(final InventoryClickEvent e){
 		boolean shift = false, numberkey = false;
 		if(e.isCancelled()) return;
@@ -102,17 +108,21 @@ public class ArmorListener implements Listener{
 			}
 		}
 	}
-
-	@EventHandler
+	
+	@EventHandler(priority =  EventPriority.HIGHEST)
 	public void playerInteractEvent(PlayerInteractEvent e){
+		if(e.useItemInHand().equals(Result.DENY))return;
+		//
 		if(e.getAction() == Action.PHYSICAL) return;
 		if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK){
-			final Player player = e.getPlayer();
-			if(e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK){// Having both of these checks is useless, might as well do it though.
-				// Some blocks have actions when you right click them which stops the client from equipping the armor in hand.
-				Material mat = e.getClickedBlock().getType();
-				for(String s : blockedMaterials){
-					if(mat.name().equalsIgnoreCase(s)) return;
+			Player player = e.getPlayer();
+			if(!e.useInteractedBlock().equals(Result.DENY)){
+				if(e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK && !player.isSneaking()){// Having both of these checks is useless, might as well do it though.
+					// Some blocks have actions when you right click them which stops the client from equipping the armor in hand.
+					Material mat = e.getClickedBlock().getType();
+					for(String s : blockedMaterials){
+						if(mat.name().equalsIgnoreCase(s)) return;
+					}
 				}
 			}
 			ArmorType newArmorType = ArmorType.matchType(e.getItem());
@@ -128,8 +138,8 @@ public class ArmorListener implements Listener{
 			}
 		}
 	}
-
-	@EventHandler
+	
+	@EventHandler(priority =  EventPriority.HIGHEST, ignoreCancelled = true)
 	public void inventoryDrag(InventoryDragEvent event){
 		// getType() seems to always be even.
 		// Old Cursor gives the item you are equipping
@@ -167,7 +177,11 @@ public class ArmorListener implements Listener{
 			if(armorEquipEvent.isCancelled()){
 				ItemStack i = e.getBrokenItem().clone();
 				i.setAmount(1);
-				i.setDurability((short) (i.getDurability() - 1));
+
+				// Set damage do one less than breaking
+				int dmg = ((Damageable)i.getItemMeta()).getDamage();
+				((Damageable)i.getItemMeta()).setDamage(dmg-1);
+				// i.setDurability((short) (i.getDurability() - 1));
 				if(type.equals(ArmorType.HELMET)){
 					p.getInventory().setHelmet(i);
 				}else if(type.equals(ArmorType.CHESTPLATE)){
@@ -184,6 +198,7 @@ public class ArmorListener implements Listener{
 	@EventHandler
 	public void playerDeathEvent(PlayerDeathEvent e){
 		Player p = e.getEntity();
+		if(e.getKeepInventory()) return;
 		for(ItemStack i : p.getInventory().getArmorContents()){
 			if(!isAirOrNull(i)){
 				Bukkit.getServer().getPluginManager().callEvent(new ArmorEquipEvent(p, EquipMethod.DEATH, ArmorType.matchType(i), i, null));
@@ -195,7 +210,7 @@ public class ArmorListener implements Listener{
 	/**
 	 * A utility method to support versions that use null or air ItemStacks.
 	 */
-	private boolean isAirOrNull(ItemStack item){
+	public static boolean isAirOrNull(ItemStack item){
 		return item == null || item.getType().equals(Material.AIR);
 	}
 }
