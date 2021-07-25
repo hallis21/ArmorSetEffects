@@ -26,13 +26,13 @@ public class ItemEffect {
         return cooldownMessage;
     }
     public void setCooldownMessage(String cooldownMessage) {
-        this.cooldownMessage = ArmorSetBonusMain.parseColors(cooldownMessage);
+        this.cooldownMessage = ArmorSetEffectsMain.parseColors(cooldownMessage);
     }
     public String getMessage() {
         return message;
     }
     public void setMessage(String message) {
-        this.message = ArmorSetBonusMain.parseColors(message);
+        this.message = ArmorSetEffectsMain.parseColors(message);
 
     }
     /**

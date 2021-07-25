@@ -1,8 +1,8 @@
 package hkr;
 
 public class CommandInit {
-    ArmorSetBonusMain pl;
-    public CommandInit(ArmorSetBonusMain pl){
+    ArmorSetEffectsMain pl;
+    public CommandInit(ArmorSetEffectsMain pl){
         this.pl = pl;
     }
 

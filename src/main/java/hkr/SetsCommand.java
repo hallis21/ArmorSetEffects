@@ -6,9 +6,9 @@ import org.bukkit.command.CommandSender;
 
 class SetsCommand implements CommandExecutor {
 
-    ArmorSetBonusMain pl;
+    ArmorSetEffectsMain pl;
 
-    public SetsCommand(ArmorSetBonusMain pl) {
+    public SetsCommand(ArmorSetEffectsMain pl) {
         this.pl = pl;
     }
 
@@ -22,7 +22,7 @@ class SetsCommand implements CommandExecutor {
                     return true;
                 }
                 boolean first = true;
-                for (ArmorSetNew set : pl.getArmorSets()) {
+                for (ArmorSet set : pl.getArmorSets()) {
                     if (!set.getHidden() || sender.hasPermission("armorsetbonus.viewsets.all")) {
                         if (!first) {
                             toPrint += ", "+set.getName();
@@ -36,7 +36,7 @@ class SetsCommand implements CommandExecutor {
             } else {
                 if (sender.hasPermission("armorsetbonus.viewsets.inspect")) {
                     boolean found = false;
-                    for (ArmorSetNew set : pl.getArmorSets()) {
+                    for (ArmorSet set : pl.getArmorSets()) {
                         String name = set.getName();
                         if(sender.hasPermission("armorsetbonus.sets."+set.getPermission())){
                             for (String str : args) {

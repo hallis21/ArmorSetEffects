@@ -17,9 +17,9 @@ import org.bukkit.inventory.ItemStack;
 import hkr.ArmorEquipEventFiles.ArmorEquipEvent;
 
 class ArmorEquipListener implements Listener {
-    ArmorSetBonusMain pl;
+    ArmorSetEffectsMain pl;
     
-    public ArmorEquipListener(ArmorSetBonusMain pl){
+    public ArmorEquipListener(ArmorSetEffectsMain pl){
         this.pl = pl;
     }
 
@@ -42,7 +42,7 @@ class ArmorEquipListener implements Listener {
         Player player = event.getPlayer();
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (pl.getActiveBonus().containsKey(player)) {
-                ArmorSetNew activeSet = pl.getActiveBonus().get(player);
+                ArmorSet activeSet = pl.getActiveBonus().get(player);
                 // If there are no itemeffects it returns without checking further
                 if (!activeSet.hasItemEffect()) {
                     return;

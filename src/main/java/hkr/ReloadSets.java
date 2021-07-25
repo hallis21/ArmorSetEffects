@@ -7,8 +7,8 @@ import org.bukkit.command.CommandSender;
 
 class ReloadSets implements CommandExecutor {
 
-    ArmorSetBonusMain pl;
-    public ReloadSets(ArmorSetBonusMain pl) {
+    ArmorSetEffectsMain pl;
+    public ReloadSets(ArmorSetEffectsMain pl) {
         this.pl = pl;
     }
     @Override
