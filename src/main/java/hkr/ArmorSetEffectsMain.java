@@ -226,7 +226,17 @@ public class ArmorSetEffectsMain extends JavaPlugin
 
 
                                 // Unused
-                                // newItemEffect.setMetadata(itemEffect.get("metadata").getAsString());
+                                if (!itemEffect.get("metadata").isJsonNull()){
+                                    JsonObject meta = itemEffect.get("metadata").getAsJsonObject();
+                                    if (!meta.get("displayName").isJsonNull()) {
+                                        newItemEffect.setName(meta.get("displayName").getAsString());
+                                    }
+                                    if (!meta.get("lore").isJsonNull()) {
+                                        newItemEffect.setLore(meta.get("lore").getAsString());
+                                        System.out.println("OOOFye");
+                                    }
+
+                                }
 
                                 JsonArray effects = new JsonArray();
                                 if (itemEffect.get("effects").isJsonArray()){
@@ -280,6 +290,7 @@ public class ArmorSetEffectsMain extends JavaPlugin
                         }
                     } catch (NullPointerException e) {
                         newSet.setItemEffects(null);
+                        e.printStackTrace();
                     }
                     armorSets.add(newSet);
 
@@ -421,15 +432,19 @@ public class ArmorSetEffectsMain extends JavaPlugin
 
 
                          
-                            if (a.getMetadata()[1] != null && pItem.getItemMeta().hasLore()) {
-                                boolean found = false;
-                                for (String lore : pItem.getItemMeta().getLore()) {
-                                   if (lore.equals(a.getMetadata()[1])) {
-                                       found = true;
-                                   }
-                                }  
+                            if (a.getMetadata()[1] != null){
+                                if (pItem.getItemMeta().hasLore()) {
+                                    boolean found = false;
+                                    for (String lore : pItem.getItemMeta().getLore()) {
+                                        if (lore.equals(a.getMetadata()[1])) {
+                                            found = true;
+                                        }
+                                    }  
 
-                                if (!found){
+                                    if (!found){
+                                        return false;
+                                    }
+                                } else {
                                     return false;
                                 }
                             }

@@ -8,19 +8,34 @@ public class ItemEffect {
     // Nullable
     Material item;
     PotionEffect[] effects;
-    String metadata;
+    String metadata[] = {null, null};
     Long cooldown;
     String message = null;
     String cooldownMessage = null;
 
     public ItemEffect(){}
-    public ItemEffect(String item, PotionEffect[] effects, String metadata, Long cooldown) {
+    public ItemEffect(String item, PotionEffect[] effects, String[] metadata, Long cooldown) {
         this.item = Material.getMaterial(item, false);
         this.effects = effects;
         this.metadata = metadata;
         this.cooldown = cooldown;
     }
 
+
+    public void setName(String name) {
+        metadata[0] = name;
+    }
+    public String getName() {
+        return metadata[0];
+    }
+    
+    public void setLore(String lore) {
+        metadata[1] = lore;
+    }
+
+    public String getLore() {
+        return metadata[1];
+    }
 
     public String getCooldownMessage() {
         return cooldownMessage;
@@ -64,12 +79,7 @@ public class ItemEffect {
         }
         this.item = Material.getMaterial(item);
     }
-    /**
-     * @param metadata the metadata to set
-     */
-    public void setMetadata(String metadata) {
-        this.metadata = metadata;
-    }
+   
     /**
      * @return the effects
      */
@@ -82,11 +92,6 @@ public class ItemEffect {
     public Material getItem() {
         return item;
     }
-    /**
-     * @return the metadata
-     */
-    public String getMetadata() {
-        return metadata;
-    }
+    
 
 }

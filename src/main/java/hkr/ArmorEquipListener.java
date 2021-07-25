@@ -50,7 +50,7 @@ class ArmorEquipListener implements Listener {
                 ItemStack heldItem = player.getInventory().getItemInMainHand();
                 if (heldItem.getType() != Material.AIR) {
                     for (ItemEffect item : activeSet.getItemEffects()) {
-                        if (item.getItem() == heldItem.getType()) {
+                        if (itemMatches(heldItem, item)) {
                             if (!onCooldown(player, item)) {
                                 pl.addItemEffect(player, item);
                                 addCoolDown(player, item);
@@ -74,6 +74,38 @@ class ArmorEquipListener implements Listener {
             }
         }
 
+    }
+
+    private boolean itemMatches(ItemStack heldItem, ItemEffect item){
+        if (heldItem.getType() == item.getItem()){
+            if (item.getName() != null) {
+                if (heldItem.getItemMeta().hasDisplayName()) {
+                    if (!heldItem.getItemMeta().getDisplayName().equals(item.getName())){
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+
+            if (item.getLore() != null) {
+                if (heldItem.getItemMeta().hasLore()) {
+                    boolean found = false;
+                    for (String l : heldItem.getItemMeta().getLore()) {
+                        if (l.equals(item.getLore())){
+                            found = true;
+                        }
+                    }
+                    if (!found) return false;
+                } else {
+                    return false;
+                }
+            }
+
+        } else {
+            return false;
+        }
+        return true;
     }
     
     // Used for item usage
