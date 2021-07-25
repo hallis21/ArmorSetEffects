@@ -10,6 +10,8 @@ public class ItemEffect {
     PotionEffect[] effects;
     String metadata;
     Long cooldown;
+    String message = null;
+    String cooldownMessage = null;
 
     public ItemEffect(){}
     public ItemEffect(String item, PotionEffect[] effects, String metadata, Long cooldown) {
@@ -17,6 +19,21 @@ public class ItemEffect {
         this.effects = effects;
         this.metadata = metadata;
         this.cooldown = cooldown;
+    }
+
+
+    public String getCooldownMessage() {
+        return cooldownMessage;
+    }
+    public void setCooldownMessage(String cooldownMessage) {
+        this.cooldownMessage = ArmorSetBonusMain.parseColors(cooldownMessage);
+    }
+    public String getMessage() {
+        return message;
+    }
+    public void setMessage(String message) {
+        this.message = ArmorSetBonusMain.parseColors(message);
+
     }
     /**
      * @return the cooldown

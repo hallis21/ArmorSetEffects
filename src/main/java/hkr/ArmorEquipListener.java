@@ -60,8 +60,8 @@ class ArmorEquipListener implements Listener {
                                 } else {
                                     player.getInventory().setItemInMainHand(null);
                                 }
-                                return;
                             }
+                            return;
                         }
                     }
                 } else if (activeSet.hasNullItem()) {
@@ -91,14 +91,22 @@ class ArmorEquipListener implements Listener {
     }
 
     private void addCoolDown(Player player, ItemEffect item) {
-        HashMap<ItemEffect, Long> newMap = new HashMap<ItemEffect, Long>();
-        newMap.put(item, System.currentTimeMillis());
-        pl.cooldowns.put(player, newMap);
+        HashMap<ItemEffect, Long> map = new HashMap<>();
+        if (pl.cooldowns.containsKey(player)){
+            map = pl.cooldowns.get(player);
+        } else {
+            pl.cooldowns.put(player, map);
+        }
+        map.put(item, System.currentTimeMillis());
     }
 
     private boolean onCooldown(Player player, ItemEffect item) {
         try {
-            if (pl.cooldowns.containsKey(player)) {
+            if (pl.cooldowns.containsKey(player)) {                
+                if (!pl.cooldowns.get(player).containsKey(item)) {
+                    return false;
+                }
+
                 long cooldown = item.getCooldown()*1000;
                 long time = System.currentTimeMillis();
                 long usedAt = pl.cooldowns.get(player).get(item);
@@ -107,7 +115,13 @@ class ArmorEquipListener implements Listener {
                     return false;
                 } else {
                     double left = cooldown-timeSince;
-                    player.sendMessage("This ability is on cooldown. ("+Math.round(left/1000)+" seconds)");
+                    if (item.getCooldownMessage() == null){
+                        player.sendMessage("This ability is on cooldown. ("+Math.round(left/1000)+" seconds)");
+                    } else if (!item.getCooldownMessage().equals("")){
+                        player.sendMessage(item.getCooldownMessage().replace("{time}", String.valueOf(Math.round(left / 1000))));
+                    }
+
+
                     return true;
                 }
                 

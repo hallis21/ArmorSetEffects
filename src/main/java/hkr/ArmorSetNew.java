@@ -1,6 +1,8 @@
 package hkr;
 
+
 import org.bukkit.potion.PotionEffect;
+
 
 public class ArmorSetNew {
     private String name;
@@ -11,6 +13,8 @@ public class ArmorSetNew {
     // Only one null effect allowed / will be added
     private ItemEffect nullEffect;
     private int priority;
+    private String getMessage = null;
+    private String looseMessage = null;
     private String permission;
 
     public ArmorSetNew() {
@@ -29,6 +33,20 @@ public class ArmorSetNew {
             return true;
         }
         return false;
+    }
+
+
+    public String getLooseMessage() {
+        return looseMessage;
+    }
+    public void setLooseMessage(String looseMessage) {
+        this.looseMessage = ArmorSetBonusMain.parseColors(looseMessage);
+    }
+    public String getGetMessage() {
+        return getMessage;
+    }
+    public void setGetMessage(String getMessage) {
+        this.getMessage = ArmorSetBonusMain.parseColors(getMessage);
     }
     /**
      * @return the permission
@@ -78,7 +96,7 @@ public class ArmorSetNew {
         String[] items = new String[4];
         for (int i = 0; i < 4; i++) {
             try {
-                items[i] = armorPieces[i].getItem().name();
+                items[i] = armorPieces[i].toString();
             } catch (NullPointerException e) {
                 items[i] = "Any";
             }

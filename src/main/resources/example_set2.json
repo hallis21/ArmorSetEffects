@@ -3,48 +3,44 @@
   "hidden": true,
   "permission": null,
   "priority": 2,
+  "equipMessage": "At your service my Lord!",
+  "unequipMessage": null,
   "armorPieces": [
     {
       "item": "DIAMOND_HELMET",
-      "metadata": 
-        {
-          "displayName": "Kings Crown",
-          "lore": null
-        }
-      
+      "metadata": {
+        "displayName": "Kings Crown",
+        "lore": null
+      }
     },
     {
       "item": "DIAMOND_CHESTPLATE",
-      "metadata": 
-        {
-          "displayName": "Kings Chestplate",
-          "lore": null
-        }
-      
+      "metadata": {
+        "displayName": "Kings Chestplate",
+        "lore": null
+      }
     },
     {
       "item": "DIAMOND_LEGGINGS",
-      "metadata": 
-        {
-          "displayName": "Kings Pantaloons",
-          "lore": null
-        }
-      
+      "metadata": {
+        "displayName": "Kings Pantaloons",
+        "lore": null
+      }
     },
     {
       "item": "DIAMOND_BOOTS",
-      "metadata": 
-        {
-          "displayName": "Kings Crocs",
-          "lore": null
-        }
-      
+      "metadata": {
+        "displayName": "Kings Crocs",
+        "lore": null
+      }
     }
   ],
   "permanentEffects": [],
   "itemEffects": [
     {
       "item": "COAL",
+      "useMessage": "To arms!",
+      "cooldownMessage": "We must wait ({time})",
       "effects": [
         {
           "effectType": "SPEED",
@@ -61,6 +57,8 @@
     },
     {
       "item": "COOKIE",
+      "useMessage": "{color:BLUE}FASTER!",
+      "cooldownMessage": "This is not ready my Lord! ({time})",
       "effects": [
         {
           "effectType": "SPEED",

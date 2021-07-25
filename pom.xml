@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>hkr</groupId>
-  <artifactId>ArmorSetBonus</artifactId>
-  <version>2.2.2</version>
+  <artifactId>ArmorSetEffects</artifactId>
+  <version>2.2.3</version>
 
-  <name>ArmorSetBonus</name>
+  <name>ArmorSetEffects</name>
   <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>https://www.spigotmc.org/resources/armor-set-effects.69860/</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -3,42 +3,36 @@
   "hidden": false,
   "permission": "exOne",
   "priority": 1,
+  "equipMessage": "{color:RED}Example Set 1 {color:GREEN}equipped",
+  "unequipMessage": "Example Set 1 unequipped",
   "armorPieces": [
     {
       "item": "DIAMOND_HELMET",
-      "metadata": 
-        {
-          "displayName": null,
-          "lore": null
-        }
-      
+      "metadata": {
+        "displayName": null,
+        "lore": null
+      }
     },
     {
       "item": "DIAMOND_CHESTPLATE",
-      "metadata": 
-        {
-          "displayName": null,
-          "lore": null
-        }
-      
+      "metadata": {
+        "displayName": null,
+        "lore": null
+      }
     },
     {
       "item": "DIAMOND_LEGGINGS",
-      "metadata": 
-        {
-          "displayName": null,
-          "lore": null
-        }
-      
+      "metadata": {
+        "displayName": null,
+        "lore": null
+      }
     },
     {
       "item": "DIAMOND_BOOTS",
-      "metadata": 
-        {
-          "displayName": null,
-          "lore": null
-        }
-      
+      "metadata": {
+        "displayName": null,
+        "lore": null
+      }
     }
   ],
   "permanentEffects": [
@@ -54,7 +48,8 @@
   "itemEffects": [
     {
       "item": "SUGAR_CANE",
-      "metadata": "test",
+      "useMessage": null,
+      "cooldownMessage": null,
       "effects": [
         {
           "effectType": "SPEED",
@@ -71,7 +66,9 @@
     },
     {
       "item": "COOKIE",
-      "metadata":"test",
+      "metadata": "test",
+      "useMessage": null,
+      "cooldownMessage": null,
       "effects": [
         {
           "effectType": "SPEED",

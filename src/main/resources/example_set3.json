@@ -3,6 +3,8 @@
   "hidden": false,
   "permission": null,
   "priority": 0,
+  "equipMessage": null,
+  "unequipMessage": null,
   "armorPieces": [
     {
       "item": "DIAMOND_HELMET",

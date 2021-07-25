@@ -11,6 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -97,6 +99,12 @@ public class ArmorSetBonusMain extends JavaPlugin
                     newSet.setName(jp.get("name").getAsString());
                     newSet.setHidden(jp.get("hidden").getAsBoolean());
                     newSet.setPriority(jp.get("priority").getAsInt());
+                    if (!jp.get("equipMessage").isJsonNull()){
+                        newSet.setGetMessage(jp.get("equipMessage").getAsString());
+                    }
+                    if (!jp.get("unequipMessage").isJsonNull()) {
+                        newSet.setLooseMessage(jp.get("unequipMessage").getAsString());
+                    }
                     if (!jp.get("permission").isJsonNull()) {
                         newSet.setPermission(jp.get("permission").getAsString());
                     }
@@ -111,7 +119,7 @@ public class ArmorSetBonusMain extends JavaPlugin
                                 JsonObject pieceData = armorPieces.get(i).getAsJsonObject();
                                 ArmorPiece newPiece = new ArmorPiece();
                                 newPiece.setItem((pieceData.get("item").getAsString()).trim());
-                                String[] tempMeta = new String[2];
+                                String[] tempMeta = {null , null};
                                 // Add metadata if present
                                 if (!pieceData.get("metadata").isJsonNull()){
                                     JsonObject meta = pieceData.get("metadata").getAsJsonObject();
@@ -200,6 +208,17 @@ public class ArmorSetBonusMain extends JavaPlugin
                                 } else {
                                     newItemEffect.setItem(itemName);
                                 }
+
+
+                                if (!itemEffect.get("useMessage").isJsonNull()){
+                                    newItemEffect.setMessage(itemEffect.get("useMessage").getAsString());
+                                }
+
+                                if (!itemEffect.get("cooldownMessage").isJsonNull()) {
+                                    newItemEffect.setCooldownMessage(itemEffect.get("cooldownMessage").getAsString());
+                                }
+
+
                                 // Unused
                                 // newItemEffect.setMetadata(itemEffect.get("metadata").getAsString());
 
@@ -369,7 +388,6 @@ public class ArmorSetBonusMain extends JavaPlugin
             return false;
         }
 
-
         for (ArmorPiece a : Aset.getArmorPieces()) {
             ItemStack pItem = player.getInventory().getArmorContents()[3-i];
             if (a.getItem() != null) {
@@ -383,11 +401,31 @@ public class ArmorSetBonusMain extends JavaPlugin
                         return false;
                     } else {
                         if (pItem.getType() == a.getItem()) {
-                            if (a.getMetadata()[0] != null && !pItem.getItemMeta().getDisplayName().contains(a.getMetadata()[0])) {
-                                return false;
+
+                            if (a.getMetadata()[0] != null){
+                                if (pItem.getItemMeta().hasDisplayName()){
+                                    if (!pItem.getItemMeta().getDisplayName().equals(a.getMetadata()[0])){
+                                        return false;
+                                    }
+                                } else {
+                                    return false;
+                                }
                             }
-                            if (a.getMetadata()[1] != null && !pItem.getItemMeta().getLore().contains((String) a.getMetadata()[1])) {
-                                return false;
+
+
+
+                         
+                            if (a.getMetadata()[1] != null && pItem.getItemMeta().hasLore()) {
+                                boolean found = false;
+                                for (String lore : pItem.getItemMeta().getLore()) {
+                                   if (lore.equals(a.getMetadata()[1])) {
+                                       found = true;
+                                   }
+                                }  
+
+                                if (!found){
+                                    return false;
+                                }
                             }
                             
                         } else {
@@ -408,7 +446,13 @@ public class ArmorSetBonusMain extends JavaPlugin
         if (activeBonus.containsKey(player)) {
             ArmorSetNew activeSet = activeBonus.get(player);
             PermanentEffect[] effects = activeSet.getPermanentEffects();
-            player.sendMessage("You lost armor set bonus: "+activeSet.getName());
+            
+            if (activeSet.getLooseMessage() == null) {
+                player.sendMessage("You lost an armor set bonus: " + activeSet.getName());
+            } else if (!activeSet.getLooseMessage().equals("")) {
+                player.sendMessage(activeSet.getLooseMessage());
+            }
+
             if (effects != null) {
                 for (PermanentEffect pE : effects) {
                     player.removePotionEffect(pE.getEffectType());
@@ -431,7 +475,11 @@ public class ArmorSetBonusMain extends JavaPlugin
     }
 
     public void addItemEffect(Player player, ItemEffect effect) {
-        player.sendMessage("You activated an ability from: "+activeBonus.get(player).getName());
+        if (effect.getMessage() == null){
+            player.sendMessage("You activated an ability from: "+activeBonus.get(player).getName());
+        } else if (!effect.getMessage().equals("")) {
+            player.sendMessage(effect.getMessage());
+        }
         for (PotionEffect peH : effect.getEffects()) {
             if (peH != null) {
                 player.addPotionEffect(peH);
@@ -445,7 +493,12 @@ public class ArmorSetBonusMain extends JavaPlugin
             removeBonus(player);
         }
 
-        player.sendMessage("You got an armor set bonus: "+set.getName());
+        if (set.getGetMessage() == null){
+
+            player.sendMessage("You got an armor set bonus: "+set.getName());
+        } else if (!set.getGetMessage().equals("")){
+            player.sendMessage(set.getGetMessage());
+        }
         if (effects != null) {
             for (PermanentEffect pE : effects) {
                 player.addPotionEffect(pE.getPotionEffect());
@@ -461,5 +514,41 @@ public class ArmorSetBonusMain extends JavaPlugin
         return activeBonus;
     }
     
+
+
+    static String parseColors(String msg){
+        String ret = "";
+        String[] parts = msg.split("\\{color:.+?\\}");
+        Pattern p = Pattern.compile("\\{color:.+?\\}");
+        Matcher m = p.matcher(msg);
+        int i = 0;
+        while (m.find()) {
+            String colorStr = m.group();
+            colorStr = colorStr.replace("{color:", "");
+            colorStr = colorStr.replace("}", "");
+
+
+            ChatColor c = ChatColor.valueOf(colorStr);
+            
+        
+            if (parts.length > i) {
+                ret += parts[i] + c;
+            } else {
+                // Trailing color
+                break;
+            }
+            i++;
+            
+        }
+        while (parts.length > i){
+            ret += parts[i];
+            i++;
+        }
+        if (parts.length == 1){
+            return msg;
+        }
+
+        return ret;
+    }
 
 }
