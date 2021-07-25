@@ -118,7 +118,13 @@ public class ArmorSetEffectsMain extends JavaPlugin
                             try {
                                 JsonObject pieceData = armorPieces.get(i).getAsJsonObject();
                                 ArmorPiece newPiece = new ArmorPiece();
-                                newPiece.setItem((pieceData.get("item").getAsString()).trim());
+                                String item = pieceData.get("item").getAsString().trim();
+                                newPiece.setItem(item);
+                                if (newPiece.getItem() == null && !(item.equals("AIR") || item.equals(""))){
+                                    getServer().getConsoleSender()
+                                            .sendMessage(ChatColor.RED+"Invalid material name in "+newSet.getName()+"! Could not find: "+item);
+                                }
+
                                 String[] tempMeta = {null , null};
                                 // Add metadata if present
                                 if (!pieceData.get("metadata").isJsonNull()){
@@ -384,7 +390,7 @@ public class ArmorSetEffectsMain extends JavaPlugin
 
     private boolean playerHas(Player player, ArmorSet Aset) {
         int i = 0;
-        if (Aset.getPermission() != null && !player.hasPermission("armorsetbonus.sets."+Aset.getPermission())) {
+        if (Aset.getPermission() != null && !player.hasPermission("armorseteffects.sets."+Aset.getPermission())) {
             return false;
         }
 
@@ -489,12 +495,15 @@ public class ArmorSetEffectsMain extends JavaPlugin
 
     private void addBonus(Player player, ArmorSet set) {
         PermanentEffect[] effects = set.getPermanentEffects();
-        if (activeBonus.containsKey(player) || activeBonus.get(player) != set) {
+        if (activeBonus.containsKey(player)){
+            if (activeBonus.get(player) == set){
+                // Already active
+                return;
+            }
             removeBonus(player);
         }
 
         if (set.getGetMessage() == null){
-
             player.sendMessage("You got an armor set bonus: "+set.getName());
         } else if (!set.getGetMessage().equals("")){
             player.sendMessage(set.getGetMessage());

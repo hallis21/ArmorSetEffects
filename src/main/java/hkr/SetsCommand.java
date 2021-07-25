@@ -14,7 +14,7 @@ class SetsCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender.hasPermission("armorsetbonus.viewsets")) {
+        if (sender.hasPermission("armorseteffects.viewsets")) {
             if (args.length == 0) {
                 String toPrint = "Loaded armor sets: ";
                 if (pl.getArmorSets().size() == 0) {
@@ -23,7 +23,7 @@ class SetsCommand implements CommandExecutor {
                 }
                 boolean first = true;
                 for (ArmorSet set : pl.getArmorSets()) {
-                    if (!set.getHidden() || sender.hasPermission("armorsetbonus.viewsets.all")) {
+                    if (!set.getHidden() || sender.hasPermission("armorseteffects.viewsets.all")) {
                         if (!first) {
                             toPrint += ", "+set.getName();
                         } else { 
@@ -34,18 +34,18 @@ class SetsCommand implements CommandExecutor {
                 }
                 sender.sendMessage(toPrint);
             } else {
-                if (sender.hasPermission("armorsetbonus.viewsets.inspect")) {
+                if (sender.hasPermission("armorseteffects.viewsets.inspect")) {
                     boolean found = false;
                     for (ArmorSet set : pl.getArmorSets()) {
                         String name = set.getName();
-                        if(sender.hasPermission("armorsetbonus.sets."+set.getPermission())){
+                        if(sender.hasPermission("armorseteffects.sets."+set.getPermission())){
                             for (String str : args) {
                                 if (name.toLowerCase().contains(str.toLowerCase())) {
                                     found = true;
                                 }
                             }                   
                         }
-                        if (found && (!set.getHidden() || sender.hasPermission("armorsetbonus.viewsets.inspect.all"))) {
+                        if (found && (!set.getHidden() || sender.hasPermission("armorseteffects.viewsets.inspect.all"))) {
                             sender.sendMessage(set.toString());
                             found = true;
                             break;

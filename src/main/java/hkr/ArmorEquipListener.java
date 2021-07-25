@@ -26,13 +26,13 @@ class ArmorEquipListener implements Listener {
 
     @EventHandler
     public void equipListen(ArmorEquipEvent event) {
-        if (event.getPlayer().hasPermission("armorsetbonus.receive")) {
+        if (event.getPlayer().hasPermission("armorseteffects.receive")) {
             pl.checkForBonus(event.getPlayer());
         }
     }
     @EventHandler
     public void onLogin(PlayerJoinEvent event){
-        if (event.getPlayer().hasPermission("armorsetbonus.receive")) {
+        if (event.getPlayer().hasPermission("armorseteffects.receive")) {
             pl.checkForBonus(event.getPlayer());
         }
     }

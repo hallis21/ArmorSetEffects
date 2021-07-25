@@ -1,20 +1,20 @@
-name: ArmorSetBonus
+name: ArmorSetEffects
 version: 2.2.3
-main: hkr.ArmorSetBonusMain
+main: hkr.ArmorSetEffectsMain
 api-version: 1.17
 author: hallis21
 commands:
    armor-reload:
       description: Reloads the armor-set config file
       usage: /armor-reload
-      permission: armorsetbonus.reload
+      permission: armorseteffects.reload
    armor-list:
       description: Shows all non-hidden sets (Unless permitted)
       usage: /armor-list [armor set name]
-      permission: armorsetbonus.viewsets
+      permission: armorseteffects.viewsets
 
 permissions:
-   armorsetbonus.reload:
+   armorseteffects.reload:
       description: Allows a player to reload the config file
       default: true
    armorsetsonus.receive:
@@ -26,12 +26,12 @@ permissions:
    armorsetsonus.viewsets.all:
       description: Allows a player to view sets (Even hidden ones)
       default: true
-   armorsetbonus.viewsets.inspect:
+   armorseteffects.viewsets.inspect:
       description: Allows a player to inspect non-hidden sets
       default: true
-   armorsetbonus.viewsets.inspect.all:
+   armorseteffects.viewsets.inspect.all:
       description: Allows a player to inspect ALL sets
       default: true
-   armorsetbonus.sets.exOne:
+   armorseteffects.sets.exOne:
       description: Allows all players to use Example Set 1
       default: true

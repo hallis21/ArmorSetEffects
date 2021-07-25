@@ -22,7 +22,7 @@
 # See example 1 and 2 ^^
 # If you have sets that have interchangable slots, make sure to prioritise correctly with similar sets
 # Note: Priority does nothing if the two sets can't be worn at the same time
-# You can add permissions to each set (permission: exampleSetOne), when adding permissions to players use "armorsetbonus.sets.{yourPermission}"
+# You can add permissions to each set (permission: exampleSetOne), when adding permissions to players use "armorseteffects.sets.{yourPermission}"
 
 # Possible, but not reccomended:
 #  - Itemeffects with no item ("item: ") as it will try to enable everytime you rightclick
