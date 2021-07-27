@@ -1,5 +1,7 @@
 package hkr;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.HiddenAction;
+
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -7,21 +9,24 @@ public class PermanentEffect {
     PotionEffectType effectType;
     int amplifier;
     PotionEffect potionEffect;
+    boolean hasParticle = false;
 
     public PermanentEffect(){}
-    public PermanentEffect(String effectType, int amplifier){
+    public PermanentEffect(String effectType, int amplifier, boolean hasParticles){
         this.effectType = PotionEffectType.getByName(effectType.trim());
         if (this.effectType == null) {
             this.effectType = PotionEffectType.getByName("CONFUSION");
         }
         this.amplifier = amplifier;
-        this.potionEffect = new PotionEffect(this.effectType, Integer.MAX_VALUE, amplifier);
+        hasParticle = hasParticles;
+        this.potionEffect = new PotionEffect(this.effectType, Integer.MAX_VALUE, amplifier, true, hasParticles);
     }
     public void fix() {
         if (this.effectType == null) {
             this.effectType = PotionEffectType.getByName("CONFUSION");
         }
-        this.potionEffect = new PotionEffect(this.effectType, Integer.MAX_VALUE, amplifier);
+        this.potionEffect = new PotionEffect(this.effectType, Integer.MAX_VALUE, amplifier, true, hasParticle);
+        
     }
     /**
      * @param amplifier the amplifier to set
@@ -29,6 +34,11 @@ public class PermanentEffect {
     public void setAmplifier(int amplifier) {
         this.amplifier = amplifier;
     }
+
+    public boolean hasParticle() {
+        return hasParticle;
+    }
+
     /**
      * @param effectType the effectType to set
      */
@@ -55,6 +65,9 @@ public class PermanentEffect {
      */
     public PotionEffect getPotionEffect() {
         return potionEffect;
+    }
+    public void setHasParticles(boolean hasParticle) {
+        this.hasParticle = hasParticle;
     }
     
 }

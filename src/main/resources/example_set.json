@@ -38,11 +38,13 @@
   "permanentEffects": [
     {
       "effectType": "FIRE_RESISTANCE",
-      "amplifier": 5
+      "amplifier": 5,
+      "hasParticles":false
     },
     {
       "effectType": "SPEED",
-      "amplifier": 0
+      "amplifier": 0,
+      "hasParticles":false
     }
   ],
   "itemEffects": [
@@ -50,16 +52,22 @@
       "item": "SUGAR_CANE",
       "useMessage": null,
       "cooldownMessage": null,
+      "metadata": {
+        "displayName": null,
+        "lore": null
+      },
       "effects": [
         {
           "effectType": "SPEED",
           "amplifier": 5,
-          "duration": 3
+          "duration": 3,
+          "hasParticles":false
         },
         {
           "effectType": "REGENERATION",
           "amplifier": 10,
-          "duration": 2
+          "duration": 2,
+          "hasParticles": false
         }
       ],
       "cooldown": 5
@@ -76,12 +84,14 @@
         {
           "effectType": "SPEED",
           "amplifier": 5,
-          "duration": 10
+          "duration": 10,
+          "hasParticles":false
         },
         {
           "effectType": "REGENERATION",
           "amplifier": 5,
-          "duration": 10
+          "duration": 10,
+          "hasParticles":false
         }
       ],
       "cooldown": 5

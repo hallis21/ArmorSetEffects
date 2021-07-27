@@ -176,6 +176,7 @@ public class ArmorSetEffectsMain extends JavaPlugin
                                 PermanentEffect newEffect = new PermanentEffect();
                                 newEffect.setEffectType(effect.get("effectType").getAsString());
                                 newEffect.setAmplifier(effect.get("amplifier").getAsInt());
+                                newEffect.setHasParticles(effect.get("hasParticles").getAsBoolean());
                                 permanentEffects[i] = newEffect;
                                 newEffect.fix();
                                 i++;
@@ -259,8 +260,9 @@ public class ArmorSetEffectsMain extends JavaPlugin
                                         String type = effect.get("effectType").getAsString();
                                         int amp = effect.get("amplifier").getAsInt();
                                         int duration = effect.get("duration").getAsInt() * 20;
+                                        boolean hasParticle = effect.get("hasParticles").getAsBoolean();
                                         effectsList[y] = new PotionEffect(PotionEffectType.getByName(type), duration,
-                                                amp);
+                                                amp, true, hasParticle);
                                         if (effectsList[y] == null) {
                                             effectsList[y] = new PotionEffect(PotionEffectType.getByName("CONFUSION"),
                                                     0, 0);
@@ -271,6 +273,7 @@ public class ArmorSetEffectsMain extends JavaPlugin
                                     } catch (NullPointerException e) {
                                         effectsList[y] = new PotionEffect(PotionEffectType.getByName("CONFUSION"), 0,
                                                 0);
+                                        getLogger().info("Error parsing itemeffects");
                                     }
                                 }
                                 newItemEffect.setEffects(effectsList);
@@ -279,6 +282,7 @@ public class ArmorSetEffectsMain extends JavaPlugin
 
                             } catch (NullPointerException e) {
                                 itemEffects[i] = null;
+                                getLogger().info("Error parsing itemeffects");
                                 i++;
                             }
                         }
