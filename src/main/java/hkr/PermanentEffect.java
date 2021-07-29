@@ -10,22 +10,24 @@ public class PermanentEffect {
     int amplifier;
     PotionEffect potionEffect;
     boolean hasParticle = false;
+    boolean isAmbient = false;
 
     public PermanentEffect(){}
-    public PermanentEffect(String effectType, int amplifier, boolean hasParticles){
+    public PermanentEffect(String effectType, int amplifier, boolean isAmbient, boolean hasParticles){
         this.effectType = PotionEffectType.getByName(effectType.trim());
         if (this.effectType == null) {
-            this.effectType = PotionEffectType.getByName("CONFUSION");
+            this.effectType = PotionEffectType.getByName("BAD_OMEN");
         }
         this.amplifier = amplifier;
-        hasParticle = hasParticles;
-        this.potionEffect = new PotionEffect(this.effectType, Integer.MAX_VALUE, amplifier, true, hasParticles);
+        this.hasParticle = hasParticles;
+        this.isAmbient = isAmbient;
+        this.potionEffect = new PotionEffect(this.effectType, Integer.MAX_VALUE, amplifier, isAmbient, hasParticles);
     }
     public void fix() {
         if (this.effectType == null) {
-            this.effectType = PotionEffectType.getByName("CONFUSION");
+            this.effectType = PotionEffectType.getByName("BAD_OMEN");
         }
-        this.potionEffect = new PotionEffect(this.effectType, Integer.MAX_VALUE, amplifier, true, hasParticle);
+        this.potionEffect = new PotionEffect(this.effectType, Integer.MAX_VALUE, amplifier, isAmbient, hasParticle);
         
     }
     /**
@@ -45,7 +47,7 @@ public class PermanentEffect {
     public void setEffectType(String effectType) {
         this.effectType = PotionEffectType.getByName(effectType);
         if (this.effectType == null) {
-            this.effectType = PotionEffectType.getByName("CONFUSION");
+            this.effectType = PotionEffectType.getByName("BAD_OMEN");
         }
     }
     /**
@@ -68,6 +70,10 @@ public class PermanentEffect {
     }
     public void setHasParticles(boolean hasParticle) {
         this.hasParticle = hasParticle;
+    }
+    
+    public void setAmbient(boolean isAmbient) {
+        this.isAmbient = isAmbient;
     }
     
 }

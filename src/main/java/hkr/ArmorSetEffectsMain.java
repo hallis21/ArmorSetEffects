@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,7 +60,7 @@ public class ArmorSetEffectsMain extends JavaPlugin
                 } catch (Exception e) {
                     e.printStackTrace();
                     getServer().getConsoleSender()
-                            .sendMessage(ChatColor.RED + "Error checking files. If this persists try manually creating these folders: plugins/ArmorSetEffects/ArmorSets");
+                            .sendMessage(ChatColor.RED + "Error checking files. If this persists try manually creating these folders: plugins/ArmorSetEffects/armorsets");
                 }
             }
             DirectoryStream<Path> dirStream = Files.newDirectoryStream(dir);
@@ -77,125 +78,311 @@ public class ArmorSetEffectsMain extends JavaPlugin
         for (File file : directoryListing) {
             toprint += file.getName() + " | ";
         }
+        toprint = toprint.subSequence(0, toprint.length()-3).toString();
 
         getLogger().info("Found folder, reading sets.");
         String temps = "(If no files are listed here the plugin has not found any)";
-        if(!toprint.equals("Files found: ")) {temps = "";}
+        if(directoryListing != null && directoryListing.size() != 0)  {temps = "";}
         getLogger().info(toprint + temps);
         if (directoryListing != null && directoryListing.size() != 0) {
             getLogger().info("Found " + directoryListing.size() + " files to read.");
             for (File child : directoryListing) {
                 try {
 
-
-
                     InputStream file;
                     file = new FileInputStream(child);
                     // JsonReader jsonReader = new JsonReader(new InputStreamReader(file));
                     JsonObject jp = new JsonParser().parse(new InputStreamReader(file)).getAsJsonObject();
-
                     
                     ArmorSet newSet = new ArmorSet();
-                    newSet.setName(jp.get("name").getAsString());
-                    newSet.setHidden(jp.get("hidden").getAsBoolean());
-                    newSet.setPriority(jp.get("priority").getAsInt());
-                    if (!jp.get("equipMessage").isJsonNull()){
-                        newSet.setGetMessage(jp.get("equipMessage").getAsString());
+                    
+                    // Tests to see that all parts are present
+
+                    // Uses default values for non critical things
+                    if (jp.get("name") == null) {
+                        getLogger().warning("Could not find field \"name\" (required) in file "+child.getName());
+                        continue;
+                    } else {
+                        try {
+                            newSet.setName(jp.get("name").getAsString());
+                        } catch (Exception e) {
+                            getLogger().warning("Field \"name\" is in wrong format, expected (string) in file " + child.getName());
+                            continue;
+                        }
                     }
-                    if (!jp.get("unequipMessage").isJsonNull()) {
-                        newSet.setLooseMessage(jp.get("unequipMessage").getAsString());
+                    if (jp.get("hidden") == null) {
+                        getLogger().warning("Could not find field \"hidden\" in file " + child.getName()+", using default (false)");
+                        newSet.setHidden(false);
+                    } else {
+                        try {
+                            newSet.setHidden(jp.get("hidden").getAsBoolean());
+                        } catch (Exception e) {
+                            newSet.setHidden(false);
+                            getLogger().warning(
+                                    "Field \"hidden\" is in wrong format, expected (boolean) in file " + child.getName()
+                                            + ", using default (false)");
+                        }
                     }
-                    if (!jp.get("permission").isJsonNull()) {
-                        newSet.setPermission(jp.get("permission").getAsString());
+                    if (jp.get("priority") == null) {
+                        newSet.setPriority(0);
+                        getLogger().warning("Could not find field \"priority\" in file " + child.getName()+", using default (0)");
+                    } else {
+                        try {
+                            newSet.setPriority(jp.get("priority").getAsInt());
+                        } catch (Exception e) {
+                            newSet.setPriority(0);
+                            getLogger().warning(
+                                    "Field \"priority\" is in wrong format, expected (int) in file " + child.getName()+", using default (0)");
+                        }
+                    }
+                    if (jp.get("equipMessage") == null) {
+                        getLogger().warning("Could not find field \"equipMessage\" in file " + child.getName()+", using default");
+                    } else {
+                        try {
+                            if (!jp.get("equipMessage").isJsonNull()) {
+                                newSet.setGetMessage(jp.get("equipMessage").getAsString());
+                            }
+                        } catch (Exception e) {
+                            getLogger().warning(
+                                    "Field \"equipMessage\" is in wrong format, expected (string) in file " + child.getName()
+                                            + ", using default");
+                        }
+                    }
+                    if (jp.get("unequipMessage") == null) {
+                        getLogger().warning(
+                                "Could not find field \"unequipMessage\" in file " + child.getName() + ", using default");
+                    } else {
+                        try {
+                            if (!jp.get("unequipMessage").isJsonNull()) {
+                                newSet.setLooseMessage(jp.get("unequipMessage").getAsString());
+                            }
+                        } catch (Exception e) {
+                            getLogger().warning("Field \"unequipMessage\" is in wrong format, expected (string) in file "
+                                    + child.getName() + ", using default");
+                        }
+                    }
+                    if (jp.get("permission") == null) {
+                        getLogger().warning("Could not find field \"permission\" in file " + child.getName()+ ", using default");
+                    } else {
+                        try {
+                            if (!jp.get("permission").isJsonNull()) {
+                                newSet.setPermission(jp.get("permission").getAsString());
+                            }
+                        } catch (Exception e) {
+                            getLogger().warning(
+                                    "Field \"permission\" is in wrong format, expected (string) in file " + child.getName()+ ", using default");
+                        }
+                    }
+                    if (jp.get("armorPieces") == null) {
+                        getLogger().warning("Could not find field \"armorPieces\" (required) in file " + child.getName());
+                        continue;
+                    } else {
+                        try {
+                            jp.get("armorPieces").getAsJsonArray();
+                        } catch (Exception e) {
+                            getLogger().warning(
+                                    "Field \"armorPieces\" (required) is in wrong format, expected (JSON array) in file " + child.getName());
+                            continue;
+                        }
                     }
 
 
                     ArmorPiece[] pieces = new ArmorPiece[4];
-                    try {
-                        JsonArray armorPieces = jp.get("armorPieces").getAsJsonArray();
-                        boolean empty = true;
-                        for (int i = 0; i < 4; i++) {
-                            try {
-                                JsonObject pieceData = armorPieces.get(i).getAsJsonObject();
-                                ArmorPiece newPiece = new ArmorPiece();
-                                String item = pieceData.get("item").getAsString().trim();
-                                newPiece.setItem(item);
-                                if (newPiece.getItem() == null && !(item.equals("AIR") || item.equals(""))){
-                                    getServer().getConsoleSender()
-                                            .sendMessage(ChatColor.RED+"Invalid material name in "+newSet.getName()+"! Could not find: "+item);
-                                }
-
-                                String[] tempMeta = {null , null};
-                                // Add metadata if present
-                                if (!pieceData.get("metadata").isJsonNull()){
-                                    JsonObject meta = pieceData.get("metadata").getAsJsonObject();
-
-                                    if (!meta.get("displayName").isJsonNull()){
-                                        tempMeta[0] = (String) meta.get("displayName").getAsString();
-                                    }
-                                    if (!meta.get("lore").isJsonNull()) {
-                                        tempMeta[1] = (String) meta.get("lore").getAsString();
-                                    }
-                                }
-
-                                newPiece.setMetadata(tempMeta);
-                                pieces[i] = newPiece;
-                                empty = false;
-                            } catch (IndexOutOfBoundsException | NullPointerException e) {
-                                pieces[i] = new ArmorPiece();
-                            }
-                        }
-                        if (empty) {
-                            getServer().getConsoleSender().sendMessage(ChatColor.RED + newSet.getName()
-                                    + ": Armor set loaded with no chosen armor slots, this will interfere with all other armor sets");
-                        }
-
-                    } catch (NullPointerException e) {
-                        // Empty set if no items are assigned
-                        for (int i = 0; i < 4; i++) {
-                            pieces[i] = new ArmorPiece();
-                        }
-                        getServer().getConsoleSender().sendMessage(ChatColor.RED + newSet.getName()
-                                + ": Armor set loaded with no chosen armor slots, this will interfere with all other armor sets");
+                    JsonArray armorPieces = jp.get("armorPieces").getAsJsonArray();
+                    if (armorPieces.size() != 4) {
+                        getLogger().warning("Invalid amount of item pieces in file "+child.getName());
+                        continue;
                     }
 
-                    newSet.setArmorPieces(pieces);
-                    // If there are no effects the list will be empty and not castable to a list
-                    try {
-                        JsonArray permEffects = new JsonArray();
-                        if (jp.get("permanentEffects").isJsonArray()){
-                            permEffects = jp.get("permanentEffects").getAsJsonArray();
+                    for (int i = 0; i < 4; i++) {
+                        JsonObject pieceData = null;
+                        ArmorPiece newPiece = new ArmorPiece();
+                        // Check that it exists as json object
+                        try {
+                            pieceData = armorPieces.get(i).getAsJsonObject();
+                        } catch (Exception e) {
+                            getLogger().warning(
+                                    "Field item peice " + i
+                                            + "  (required) is in wrong format, in file "
+                                            + child.getName());
+                            break;
                         }
-                        PermanentEffect[] permanentEffects = new PermanentEffect[permEffects.size()];
-                        int i = 0;
-                        for (JsonElement eff : permEffects) {
-                            // If parsing permEffects fails it will be null
-                            JsonObject effect = eff.getAsJsonObject();
+                        
 
+
+                        if (pieceData.get("item") == null) {
+                            getLogger().warning("Could not find field \"item\"(required) in item piece "+i+" in file"
+                                    + child.getName());
+                            break;
+                        } else {
                             try {
-                                PermanentEffect newEffect = new PermanentEffect();
-                                newEffect.setEffectType(effect.get("effectType").getAsString());
-                                newEffect.setAmplifier(effect.get("amplifier").getAsInt());
-                                newEffect.setHasParticles(effect.get("hasParticles").getAsBoolean());
-                                permanentEffects[i] = newEffect;
-                                newEffect.fix();
-                                i++;
-                            } catch (NullPointerException e) {
-                                i++;
-                            }
-
-                        }
-                        // If all elements are null it does not add the array, null
-                        for (PermanentEffect permE : permanentEffects) {
-                            if (permE != null) {
-                                newSet.setPermanentEffects(permanentEffects);
+                                String item = pieceData.get("item").getAsString().trim();
+                                newPiece.setItem(item);
+                                if (newPiece.getItem() == null && !(item.equals("AIR"))) {
+                                    getLogger().warning(ChatColor.RED + "Invalid material name in "
+                                                    + child.getName() + "! Could not find: " + item);
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                getLogger().warning("Field \"item\"(required) in  item peice " + i
+                                        + " is in wrong format, in file " + child.getName());
                                 break;
                             }
                         }
 
-                    } catch (ClassCastException | NullPointerException e) {
-                        newSet.setPermanentEffects(null);
+                        // Metadata
+                        String[] tempMeta = { null, null };
+                        if (pieceData.get("metadata") == null) {
+                            getLogger().warning("Could not find field \"metadata\"in item piece " + i
+                                    + " in file" + child.getName()+", using default");
+                            
+                        } else {
+                            try {
+                                JsonObject meta = pieceData.get("metadata").getAsJsonObject();
+                                
+                                if (meta.get("displayName") == null){
+                                    getLogger().warning("Could not find field \"metadata: displayName\"in item piece " + i
+                                            + " in file" + child.getName() + ", using default");
+                                } else {
+                                    try {
+                                        tempMeta[0] = (meta.get("displayName").isJsonNull()) ? null : meta
+                                                .get("displayName").getAsString();
+                                    } catch (Exception e) {
+                                        getLogger().warning("Field \"metadata: displayName\" in  item peice " + i
+                                                + " is in wrong format, in file " + child.getName()
+                                                + ", using default");
+                                    }
+                                }
+                                if (meta.get("lore") == null) {
+                                    getLogger().warning(
+                                            "Could not find field \"metadata: lore\"in item piece " + i
+                                                    + " in file" + child.getName() + ", using default");
+                                } else {
+                                    try {
+                                        tempMeta[1] = (meta.get("lore").isJsonNull()) ? null
+                                                : meta.get("lore").getAsString();
+                                    } catch (Exception e) {
+                                        getLogger().warning("Field \"metadata: lore\" in  item peice " + i
+                                                + " is in wrong format, in file " + child.getName()
+                                                + ", using default");
+                                    }
+                                }
+                                
+                            } catch (Exception e) {
+                                getLogger().warning("Field \"metadata\" in  item peice " + i
+                                        + " is in wrong format, in file " + child.getName()
+                                        + ", using default");
+
+                            }
+
+                        }
+                        newPiece.setMetadata(tempMeta);
+                        pieces[i] = newPiece;
                     }
+                    // If null pieces are present an error happend
+                    boolean breakit = false;
+                    for (ArmorPiece set : pieces){
+                        if (set == null) breakit = true;
+                    }
+                    if (breakit) break;
+                    newSet.setArmorPieces(pieces);
+                    JsonArray permEffectsJson = new JsonArray();
+                    if (jp.get("permanentEffects") == null) {
+                        getLogger().warning(
+                                "Could not find field \"permanentEffects\" in file " + child.getName() + ", using default (none)");
+                    } else {
+                        try {
+                            if (!jp.get("permanentEffects").isJsonNull()) {
+                                permEffectsJson = jp.get("permanentEffects").getAsJsonArray();
+                            }
+                        } catch (Exception e) {
+                            getLogger().warning("Field \"permanentEffects\" is in wrong format, expected (JSON array) in file "
+                                    + child.getName() + ", using default (none)");
+                        }
+                    }
+
+                    ArrayList<PermanentEffect> permEffects = new ArrayList<>();
+
+                    // Default state of json array is 0 so the loop will only loop if items present
+                    int f = 0;
+                    for (JsonElement eff : permEffectsJson) {
+                        if (!eff.isJsonObject()) {
+                            getLogger().warning(
+                                    "Field \"permanentEffects: ("+f+")\" is in wrong format, expected (JSON object) in file "
+                                            + child.getName() + ", skipping");
+                            continue;
+                        }
+                        f++;
+                        JsonObject effectObject = eff.getAsJsonObject();
+                        PermanentEffect newEffect = new PermanentEffect();
+
+                        if (effectObject.get("effectType") == null) {
+                            getLogger().warning("Could not find field \"effectType\" (required) in file " + child.getName()
+                                    + ", skipping");
+                            continue;
+                        } else {
+                            try {
+                                newEffect.setEffectType(effectObject.get("effectType").getAsString());
+                            } catch (Exception e) {
+                                getLogger().warning("Field \"effectType\" (required) is in wrong format, expected (string) in file "
+                                        + child.getName() + ", skipping");
+                                continue;
+                            }
+                        }
+
+                        if (effectObject.get("amplifier") == null) {
+                            getLogger().warning("Could not find field \"amplifier\" (required) in file "
+                                    + child.getName() + ", skipping");
+                            continue;
+                        } else {
+                            try {
+                                newEffect.setAmplifier(effectObject.get("amplifier").getAsInt());
+                            } catch (Exception e) {
+                                getLogger().warning(
+                                        "Field \"amplifier\" (required) is in wrong format, expected (int) in file "
+                                                + child.getName() + ", skipping");
+                                continue;
+                            }
+                        }
+                        if (effectObject.get("hasParticles") == null) {
+                            getLogger().warning("Could not find field \"hasParticles\" in file "
+                                    + child.getName() + ", using default");
+                            newEffect.setHasParticles(true);
+
+                        } else {
+                            try {
+                                newEffect.setHasParticles(effectObject.get("hasParticles").getAsBoolean());
+                            } catch (Exception e) {
+                                newEffect.setHasParticles(true);
+                                getLogger().warning(
+                                        "Field \"hasParticles\" is in wrong format, expected (boolean) in file "
+                                                + child.getName() + ", using default");
+                                
+                            }
+                        }
+                        if (effectObject.get("isAmbient") == null) {
+                            getLogger().warning("Could not find field \"isAmbient\" in file " + child.getName()
+                                    + ", using default");
+                            newEffect.setAmbient(false);
+
+                        } else {
+                            try {
+                                newEffect.setAmbient(effectObject.get("isAmbient").getAsBoolean());
+                            } catch (Exception e) {
+                                newEffect.setAmbient(false);
+                                getLogger().warning(
+                                        "Field \"isAmbient\" is in wrong format, expected (boolean) in file "
+                                                + child.getName() + ", using default");
+
+                            }
+                        }
+                        newEffect.fix();
+                        permEffects.add(newEffect);
+
+
+
+                    }
+                    newSet.setPermanentEffects(permEffects);
 
                     try {
                         JsonArray itemE = new JsonArray();
@@ -470,7 +657,7 @@ public class ArmorSetEffectsMain extends JavaPlugin
     public void removeBonus(Player player) {
         if (activeBonus.containsKey(player)) {
             ArmorSet activeSet = activeBonus.get(player);
-            PermanentEffect[] effects = activeSet.getPermanentEffects();
+            List<PermanentEffect> effects = activeSet.getPermanentEffects();
             
             if (activeSet.getLooseMessage() == null) {
                 player.sendMessage("You lost an armor set bonus: " + activeSet.getName());
@@ -513,7 +700,7 @@ public class ArmorSetEffectsMain extends JavaPlugin
     }
 
     private void addBonus(Player player, ArmorSet set) {
-        PermanentEffect[] effects = set.getPermanentEffects();
+        List<PermanentEffect> effects = set.getPermanentEffects();
         if (activeBonus.containsKey(player)){
             if (activeBonus.get(player) == set){
                 // Already active

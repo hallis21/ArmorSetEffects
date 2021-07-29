@@ -1,6 +1,8 @@
 package hkr;
 
 
+import java.util.List;
+
 import org.bukkit.potion.PotionEffect;
 
 
@@ -8,7 +10,7 @@ public class ArmorSet {
     private String name;
     private boolean hidden;
     private ArmorPiece[] armorPieces;
-    private PermanentEffect[] permanentEffects;
+    private List<PermanentEffect> permanentEffects;
     private ItemEffect[] itemEffects;
     // Only one null effect allowed / will be added
     private ItemEffect nullEffect;
@@ -20,7 +22,8 @@ public class ArmorSet {
     public ArmorSet() {
     }
 
-    public ArmorSet(String name, boolean hidden, ArmorPiece[] armorPieces, PermanentEffect[] permanentEffects, ItemEffect[] itemEffects, int priority) {
+    public ArmorSet(String name, boolean hidden, ArmorPiece[] armorPieces, 
+            List<PermanentEffect> permanentEffects, ItemEffect[] itemEffects, int priority) {
         this.name = name;
         this.hidden = hidden;
         this.armorPieces = armorPieces;
@@ -166,7 +169,7 @@ public class ArmorSet {
     /**
      * @param permanentEffects the permanentEffects to set
      */
-    public void setPermanentEffects(PermanentEffect[] permanentEffects) {
+    public void setPermanentEffects(List<PermanentEffect> permanentEffects) {
         this.permanentEffects = permanentEffects;
     }
     /**
@@ -190,7 +193,7 @@ public class ArmorSet {
     /**
      * @return the permanentEffects
      */
-    public PermanentEffect[] getPermanentEffects() {
+    public List<PermanentEffect> getPermanentEffects() {
         return permanentEffects;
     }
     public boolean getHidden(){
