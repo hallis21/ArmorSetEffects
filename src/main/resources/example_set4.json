@@ -1,9 +1,9 @@
 {
-  "name": "Example Set 1",
+  "name": "Example Set 4",
   "hidden": false,
   "permission": "exOne",
-  "priority": 1,
-  "equipMessage": "{color:RED}Example Set 1 {color:GREEN}equipped",
+  "priority": 2,
+  "equipMessage": "{color:RED}Example Set 4 {color:BLUE}equipped",
   "unequipMessage": "Example Set 1 unequipped",
   "armorPieces": [
     {
@@ -31,7 +31,7 @@
       "item": "DIAMOND_BOOTS",
       "metadata": {
         "displayName": null,
-        "lore": null
+        "lore": "FASTER"
       }
     }
   ],
@@ -40,48 +40,48 @@
       "effectType": "FIRE_RESISTANCE",
       "amplifier": 5,
       "isAmbient": true,
-      "hasParticles":false
+      "hasParticles": false
     },
     {
       "effectType": "SPEED",
-      "amplifier": 0,
+      "amplifier": 5,
       "isAmbient": true,
-      "hasParticles":false
+      "hasParticles": false
     }
   ],
   "itemEffects": [
     {
       "item": "SUGAR_CANE",
       "useMessage": null,
+      "consumeItem": false,
       "cooldownMessage": null,
       "metadata": {
         "displayName": null,
         "lore": null
       },
-      "consumeItem": true,
       "effects": [
         {
           "effectType": "SPEED",
           "amplifier": 5,
-          "duration": 3,
+          "duration": 1,
           "isAmbient": true,
           "hasParticles": false
         },
         {
-          "effectType": "REGENERATION",
-          "amplifier": 10,
-          "duration": 2,
+          "effectType": "LEVITATION",
+          "amplifier": 1,
+          "duration": 1,
           "isAmbient": true,
           "hasParticles": false
         }
       ],
-      "cooldown": 5
+      "cooldown": 1
     },
     {
       "item": "COOKIE",
       "metadata": {
-        "displayName":null,
-        "lore":null
+        "displayName": null,
+        "lore": null
       },
       "consumeItem": true,
       "useMessage": null,
@@ -90,16 +90,16 @@
         {
           "effectType": "SPEED",
           "amplifier": 5,
-          "duration": 10,
+          "duration": 2,
           "isAmbient": true,
-          "hasParticles":false
+          "hasParticles": false
         },
         {
           "effectType": "REGENERATION",
           "amplifier": 5,
-          "duration": 10,
+          "duration": 2,
           "isAmbient": true,
-          "hasParticles":false
+          "hasParticles": false
         }
       ],
       "cooldown": 5

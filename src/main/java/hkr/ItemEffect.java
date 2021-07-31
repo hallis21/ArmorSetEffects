@@ -1,20 +1,24 @@
 package hkr;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.potion.PotionEffect;
 
 public class ItemEffect {
     // Nullable
     Material item;
-    PotionEffect[] effects;
+    List<PotionEffect> effects = new ArrayList<>();
     String metadata[] = {null, null};
     Long cooldown;
     String message = null;
     String cooldownMessage = null;
+    boolean consumeItem = true;
 
     public ItemEffect(){}
-    public ItemEffect(String item, PotionEffect[] effects, String[] metadata, Long cooldown) {
+    public ItemEffect(String item, List<PotionEffect> effects, String[] metadata, Long cooldown) {
         this.item = Material.getMaterial(item, false);
         this.effects = effects;
         this.metadata = metadata;
@@ -65,8 +69,12 @@ public class ItemEffect {
     /**
      * @param effects the effects to set
      */
-    public void setEffects(PotionEffect[] effects) {
+    public void setEffects(List<PotionEffect> effects) {
         this.effects = effects;
+    }
+    
+    public void addEffects(PotionEffect effect) {
+        effects.add(effect);
     }
     /**
      * @param item the item to set
@@ -83,7 +91,7 @@ public class ItemEffect {
     /**
      * @return the effects
      */
-    public PotionEffect[] getEffects() {
+    public List<PotionEffect> getEffects() {
         return effects;
     }
     /**
@@ -92,6 +100,15 @@ public class ItemEffect {
     public Material getItem() {
         return item;
     }
+    
+    public void setConsumeItem(boolean consumeItem) {
+        this.consumeItem = consumeItem;
+    }
+    
+    public boolean getConsumeItem() {
+        return consumeItem;
+    }
+
     
 
 }

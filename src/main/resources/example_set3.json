@@ -46,11 +46,15 @@
   "permanentEffects": [
     {
       "effectType": "FIRE_RESISTANCE",
-      "amplifier": 5
+      "amplifier": 5,
+      "isAmbient": true,
+      "hasParticles": false
     },
     {
       "effectType": "SPEED",
-      "amplifier": 6
+      "amplifier": 6,
+      "isAmbient": true,
+      "hasParticles": false
     }
   ],
   "itemEffects": null

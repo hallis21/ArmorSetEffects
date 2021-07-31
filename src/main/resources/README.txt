@@ -3,6 +3,10 @@
 # These are instructions for how to add your own sets
 # Do not edit files in this directory, they are overwritten on every run
 
+####
+This file is a bit outdated, I will update it soon, so for now simply check out the examples included
+####
+
 # Mutliple examples are included, use the format used in those
 
 # One set per file, do not use the same file

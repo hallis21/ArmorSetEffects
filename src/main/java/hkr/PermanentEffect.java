@@ -1,7 +1,5 @@
 package hkr;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.HiddenAction;
-
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 

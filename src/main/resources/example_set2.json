@@ -2,7 +2,7 @@
   "name": "Example Set 2",
   "hidden": true,
   "permission": null,
-  "priority": 2,
+  "priority": 3,
   "equipMessage": "At your service my Lord!",
   "unequipMessage": null,
   "armorPieces": [
@@ -45,16 +45,21 @@
         "displayName": null,
         "lore": null
       },
+      "consumeItem": true,
       "effects": [
         {
           "effectType": "SPEED",
           "amplifier": 5,
-          "duration": 3
+          "duration": 3,
+          "isAmbient": true,
+          "hasParticles":false
         },
         {
           "effectType": "REGENERATION",
           "amplifier": 10,
-          "duration": 2
+          "duration": 2,
+          "isAmbient": true,
+          "hasParticles":false
         }
       ],
       "cooldown": 50
@@ -63,6 +68,7 @@
       "item": "COOKIE",
       "useMessage": "{color:BLUE}FASTER!",
       "cooldownMessage": "This is not ready my Lord! ({time})",
+      "consumeItem": true,
       "metadata": {
         "displayName": null,
         "lore": null
@@ -71,7 +77,9 @@
         {
           "effectType": "SPEED",
           "amplifier": 5,
-          "duration": 10
+          "duration": 10,
+          "isAmbient": true,
+          "hasParticles":false
         }
       ],
       "cooldown": 50

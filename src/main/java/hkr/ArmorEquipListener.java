@@ -54,11 +54,13 @@ class ArmorEquipListener implements Listener {
                             if (!onCooldown(player, item)) {
                                 pl.addItemEffect(player, item);
                                 addCoolDown(player, item);
-                                if (heldItem.getAmount()>1) {
-                                    heldItem.setAmount(heldItem.getAmount()-1);
-                                    
-                                } else {
-                                    player.getInventory().setItemInMainHand(null);
+                                if (item.getConsumeItem()) {
+                                    if (heldItem.getAmount()>1) {
+                                        heldItem.setAmount(heldItem.getAmount()-1);
+                                        
+                                    } else {
+                                        player.getInventory().setItemInMainHand(null);
+                                    }
                                 }
                             }
                             return;
