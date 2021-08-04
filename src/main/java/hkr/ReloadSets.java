@@ -13,6 +13,12 @@ class ReloadSets implements CommandExecutor {
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender.hasPermission("armorseteffects.reload") || sender.isOp())){
+            return false;
+        }
+
+
+
         sender.sendMessage("Reloading config");
         if (pl.flush()) {
             sender.sendMessage("Reloaded");
