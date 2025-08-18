@@ -1,0 +1,21 @@
+{
+  "debug": false,
+  "armorSets": {
+    "enabled": true,
+    "loadFromDirectory": true,
+    "setsDirectory": "sets"
+  },
+  "gui": {
+    "enabled": true,
+    "title": "Armor Sets",
+    "size": 54,
+    "showHidden": false
+  },
+  "effects": {
+    "stackSimilar": false,
+    "showParticles": true,
+    "refreshInterval": 20,
+    "priorityOverride": true
+  },
+  "blockedMaterials": []
+}

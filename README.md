@@ -1,14 +1,50 @@
-# ArmorSetEffects
-Minecraft spigot/Bukkit plugin.
+# ArmorSetEffects V2
 
-This plugin allows you to specify armor sets so that if a player equips all required armor pieces they are given specified effects (potion effects).
+A modern, high-performance Minecraft Paper plugin written in Kotlin that provides armor set bonuses and effects.
 
-You can specify an unlimited amount of sets, as well as unlimited effects per set. The plugin also supports having required item names (e.g. change it with an anvil), and meta-data (flavour text).
+## 🚀 Features
 
+- **Modern Architecture**: Built with Kotlin for Paper 1.21.8
+- **Flexible Configuration**: JSON-based configuration with hot reloading
+- **Priority System**: Armor sets can have different priorities for conflicts
+- **Advanced Effects**: Permanent effects, temporary effects, and item-based abilities
+- **Adventure Integration**: Rich text formatting with MiniMessage
+- **Performance Optimized**: Async operations and efficient event handling
+- **Comprehensive Commands**: GUI, list, and admin commands
+- **Migration Support**: Automatic migration from V1 configurations
 
+## 📦 Installation
 
-# Installation
-To install simply put the ArmorSet.jar in your plugin folder.
-To generate readme.txt simply run the plugin once. This will create a plugin folder containing everything you need to get started.
+1. Download the latest `ArmorSetEffectsV2.jar` from releases
+2. Place it in your Paper server's `plugins/` folder
+3. Start your server - configuration files will be generated automatically
+4. Configure your armor sets in `plugins/ArmorSetEffects/sets/`
 
-To build this use "mvn package install"
+## 🔧 Building
+
+```bash
+./gradlew build fatJar
+```
+
+The plugin JAR will be available in `build/libs/`
+
+## 📚 Documentation
+
+- **[Migration Plan](MIGRATION_PLAN.md)** - Complete V1 to V2 migration guide
+- **Configuration**: JSON-based with example sets included
+- **Commands**: `/armor-list`, `/armor-gui`, `/armor-reload`
+
+## 🔄 V1 to V2 Migration
+
+The legacy V1 Java implementation is preserved in the `LegacyImp` branch. V2 includes automatic configuration migration when upgrading.
+
+## 🏗️ Development
+
+- **Language**: Kotlin 1.9.22
+- **Target**: Paper API 1.21.8
+- **Build System**: Gradle with Kotlin DSL
+- **Dependencies**: Adventure, kotlinx.serialization
+
+## 📖 Legacy V1
+
+The original Java implementation is available in the `LegacyImp` branch for reference and compatibility.
