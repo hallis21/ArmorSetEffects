@@ -1,6 +1,8 @@
 # ArmorSetEffects V2
 
-A modern, high-performance Minecraft Paper plugin written in Kotlin that provides armor set bonuses and effects.
+A Minecraft Paper plugin that grants players special effects and bonuses when wearing complete armor sets.
+
+This plugin allows server administrators to define custom armor sets in JSON configuration files. When a player equips all pieces of a defined armor set, they automatically receive the configured effects and bonuses. The plugin supports multiple armor sets with priority systems to handle conflicts when players wear overlapping sets.
 
 ## 🚀 Features
 
@@ -10,7 +12,7 @@ A modern, high-performance Minecraft Paper plugin written in Kotlin that provide
 - **Advanced Effects**: Permanent effects, temporary effects, and item-based abilities
 - **Adventure Integration**: Rich text formatting with MiniMessage
 - **Performance Optimized**: Async operations and efficient event handling
-- **Comprehensive Commands**: GUI, list, and admin commands
+- **Comprehensive Commands**: List and admin commands
 - **Migration Support**: Automatic migration from V1 configurations
 
 ## 📦 Installation
@@ -32,7 +34,7 @@ The plugin JAR will be available in `build/libs/`
 
 - **[Migration Plan](MIGRATION_PLAN.md)** - Complete V1 to V2 migration guide
 - **Configuration**: JSON-based with example sets included
-- **Commands**: `/armor-list`, `/armor-gui`, `/armor-reload`
+- **Commands**: `/armor-list`, `/armor-reload`
 
 ## 🔄 V1 to V2 Migration
 
