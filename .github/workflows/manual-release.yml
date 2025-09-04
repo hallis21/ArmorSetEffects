@@ -1,0 +1,178 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 2.0.0)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        default: false
+        type: boolean
+      draft:
+        description: 'Create as draft release'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for changelog generation
+    
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+    
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+    
+    - name: Validate version format
+      run: |
+        if [[ ! "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "❌ Error: Version must be in format X.Y.Z (e.g., 2.0.0)"
+          exit 1
+        fi
+    
+    - name: Check if tag exists
+      run: |
+        if git rev-parse "v${{ inputs.version }}" >/dev/null 2>&1; then
+          echo "❌ Error: Tag v${{ inputs.version }} already exists"
+          exit 1
+        fi
+    
+    - name: Update version in build.gradle.kts
+      run: |
+        sed -i 's/version = ".*"/version = "${{ inputs.version }}"/' build.gradle.kts
+        echo "Updated version to ${{ inputs.version }}"
+        cat build.gradle.kts | grep 'version = '
+    
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+    
+    - name: Run tests
+      run: ./gradlew test
+    
+    - name: Check code formatting
+      run: ./gradlew spotlessCheck
+    
+    - name: Build plugin JAR
+      run: ./gradlew clean fatJar
+    
+    - name: Verify JAR was created
+      run: |
+        JAR_FILE="build/libs/ArmorSetEffects-${{ inputs.version }}.jar"
+        if [[ ! -f "$JAR_FILE" ]]; then
+          echo "❌ Error: JAR file not found at $JAR_FILE"
+          ls -la build/libs/
+          exit 1
+        fi
+        echo "✅ JAR created: $JAR_FILE"
+        echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
+    
+    - name: Generate changelog
+      id: changelog
+      run: |
+        echo "Generating changelog..."
+        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        if [[ -n "$LAST_TAG" ]]; then
+          CHANGELOG=$(git log --oneline --pretty=format:"- %s" ${LAST_TAG}..HEAD)
+        else
+          CHANGELOG=$(git log --oneline --pretty=format:"- %s" -10)
+        fi
+        
+        # Create changelog for GitHub release
+        cat > changelog.md << EOF
+        ## ArmorSetEffects v${{ inputs.version }}
+        
+        ### Changes
+        $CHANGELOG
+        
+        ---
+        **Installation:**
+        1. Download \`ArmorSetEffects-${{ inputs.version }}.jar\` below
+        2. Place it in your Paper server's \`plugins/\` folder
+        3. Restart your server
+        
+        **Requirements:**
+        - Paper 1.21.8 or later
+        - Java 21
+        
+        For configuration help, see the [README](https://github.com/hallis21/armorseteffects/blob/master/README.md).
+        EOF
+        
+        echo "Generated changelog:"
+        cat changelog.md
+    
+    - name: Create and push tag
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag -a "v${{ inputs.version }}" -m "Release version ${{ inputs.version }}"
+        git push origin "v${{ inputs.version }}"
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ inputs.version }}
+        name: ArmorSetEffects v${{ inputs.version }}
+        body_path: changelog.md
+        files: ${{ env.JAR_FILE }}
+        draft: ${{ inputs.draft }}
+        prerelease: ${{ inputs.prerelease }}
+        make_latest: ${{ !inputs.prerelease && !inputs.draft }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Create version bump PR
+      if: ${{ !inputs.draft }}
+      run: |
+        # Calculate next development version
+        IFS='.' read -r major minor patch <<< "${{ inputs.version }}"
+        next_patch=$((patch + 1))
+        next_dev_version="${major}.${minor}.${next_patch}-SNAPSHOT"
+        
+        # Create new branch for version bump
+        git checkout -b "bump-version-to-${next_dev_version}"
+        
+        # Update version
+        sed -i "s/version = \"${{ inputs.version }}\"/version = \"${next_dev_version}\"/" build.gradle.kts
+        
+        # Commit and push
+        git add build.gradle.kts
+        git commit -m "Bump version to next development cycle: ${next_dev_version}"
+        git push origin "bump-version-to-${next_dev_version}"
+        
+        # Create PR
+        gh pr create \
+          --title "Bump version to ${next_dev_version}" \
+          --body "Automatic version bump after releasing v${{ inputs.version }}" \
+          --head "bump-version-to-${next_dev_version}" \
+          --base master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Release Summary
+      run: |
+        echo "🎉 Release v${{ inputs.version }} created successfully!"
+        echo ""
+        echo "📋 Release Details:"
+        echo "   Version: ${{ inputs.version }}"
+        echo "   Prerelease: ${{ inputs.prerelease }}"
+        echo "   Draft: ${{ inputs.draft }}"
+        echo "   JAR: ${{ env.JAR_FILE }}"
+        echo ""
+        echo "🔗 Release URL: https://github.com/${{ github.repository }}/releases/tag/v${{ inputs.version }}"
