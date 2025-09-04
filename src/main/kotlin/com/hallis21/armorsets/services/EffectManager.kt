@@ -5,18 +5,18 @@ import com.hallis21.armorsets.models.ArmorSet
 import com.hallis21.armorsets.models.ItemEffect
 import com.hallis21.armorsets.models.PermanentEffect
 import com.hallis21.armorsets.utils.Logger
-// import kotlinx.coroutines.CoroutineScope
-// import kotlinx.coroutines.Dispatchers
-// import kotlinx.coroutines.SupervisorJob
-// import kotlinx.coroutines.cancel
-// import kotlinx.coroutines.delay
-// import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+// import kotlinx.coroutines.CoroutineScope
+// import kotlinx.coroutines.Dispatchers
+// import kotlinx.coroutines.SupervisorJob
+// import kotlinx.coroutines.cancel
+// import kotlinx.coroutines.delay
+// import kotlinx.coroutines.launch
 
 class EffectManager(private val plugin: ArmorSetsPlugin) {
     // private val effectScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -183,6 +183,7 @@ class EffectManager(private val plugin: ArmorSetsPlugin) {
 
     private fun startEffectRefreshTask() {
         // TODO: Implement with Bukkit scheduler instead of coroutines
+
         /*
         val config = plugin.configManager.getConfig()
         val refreshInterval = config.effects.refreshInterval.toLong()
@@ -197,7 +198,7 @@ class EffectManager(private val plugin: ArmorSetsPlugin) {
                 }
             }
         }
-        */
+         */
     }
 
     private fun refreshEffects() {

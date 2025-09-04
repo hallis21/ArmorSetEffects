@@ -56,23 +56,24 @@ tasks {
     }
 
     // Create a fat JAR that includes all dependencies
-    val fatJar = register<Jar>("fatJar") {
-        archiveClassifier.set("")
-        
-        from(sourceSets.main.get().output)
-        
-        dependsOn(configurations.runtimeClasspath)
-        from({
-            configurations.runtimeClasspath.get().filter { 
-                it.name.endsWith("jar") && !it.name.contains("paper-api") 
-            }.map { zipTree(it) }
-        })
-        
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        
-        // Exclude signature files that can cause issues
-        exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
-    }
+    val fatJar =
+        register<Jar>("fatJar") {
+            archiveClassifier.set("")
+
+            from(sourceSets.main.get().output)
+
+            dependsOn(configurations.runtimeClasspath)
+            from({
+                configurations.runtimeClasspath.get().filter {
+                    it.name.endsWith("jar") && !it.name.contains("paper-api")
+                }.map { zipTree(it) }
+            })
+
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+            // Exclude signature files that can cause issues
+            exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+        }
 
     build {
         dependsOn(fatJar)
@@ -169,7 +170,7 @@ tasks.register<Copy>("copyToTestServer") {
     from("build/libs")
     include("*.jar")
     exclude("*-sources.jar")
-    exclude("*-javadoc.jar") 
+    exclude("*-javadoc.jar")
     into("test-server/plugins")
     doLast {
         println("Plugin copied to test server!")

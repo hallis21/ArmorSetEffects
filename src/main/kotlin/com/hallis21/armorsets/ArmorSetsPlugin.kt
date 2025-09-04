@@ -6,11 +6,11 @@ import com.hallis21.armorsets.listeners.ArmorEquipListener
 import com.hallis21.armorsets.services.ArmorSetManager
 import com.hallis21.armorsets.services.EffectManager
 import com.hallis21.armorsets.utils.Logger
+import org.bukkit.plugin.java.JavaPlugin
 // import kotlinx.coroutines.CoroutineScope
 // import kotlinx.coroutines.Dispatchers
 // import kotlinx.coroutines.SupervisorJob
 // import kotlinx.coroutines.cancel
-import org.bukkit.plugin.java.JavaPlugin
 
 class ArmorSetsPlugin : JavaPlugin() {
     // private val pluginScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
