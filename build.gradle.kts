@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.hallis21.armorsets"
-version = "2.0.0-SNAPSHOT"
+version = "2.0.0"
 
 dependencies {
     // Paper API
