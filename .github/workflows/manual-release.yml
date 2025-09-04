@@ -74,7 +74,7 @@ jobs:
     
     - name: Verify JAR was created
       run: |
-        JAR_FILE="build/libs/ArmorSetEffects-${{ inputs.version }}.jar"
+        JAR_FILE="build/libs/ArmorSetEffectsV2-${{ inputs.version }}.jar"
         if [[ ! -f "$JAR_FILE" ]]; then
           echo "❌ Error: JAR file not found at $JAR_FILE"
           ls -la build/libs/
@@ -103,7 +103,7 @@ jobs:
         
         ---
         **Installation:**
-        1. Download \`ArmorSetEffects-${{ inputs.version }}.jar\` below
+        1. Download \`ArmorSetEffectsV2-${{ inputs.version }}.jar\` below
         2. Place it in your Paper server's \`plugins/\` folder
         3. Restart your server
         

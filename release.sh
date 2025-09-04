@@ -58,7 +58,7 @@ echo -e "${YELLOW}🔨 Building plugin...${NC}"
 ./gradlew clean fatJar
 
 # Check if JAR was created
-JAR_FILE="build/libs/ArmorSetEffects-${VERSION}.jar"
+JAR_FILE="build/libs/ArmorSetEffectsV2-${VERSION}.jar"
 if [[ ! -f "$JAR_FILE" ]]; then
     echo -e "${RED}❌ Error: JAR file not found at $JAR_FILE${NC}"
     echo "Available files:"
@@ -89,7 +89,7 @@ $CHANGELOG
 
 ---
 **Installation:**
-1. Download \`ArmorSetEffects-${VERSION}.jar\` below
+1. Download \`ArmorSetEffectsV2-${VERSION}.jar\` below
 2. Place it in your Paper server's \`plugins/\` folder
 3. Restart your server
 
