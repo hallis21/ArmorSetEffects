@@ -133,7 +133,6 @@ jobs:
         files: ${{ env.JAR_FILE }}
         draft: ${{ inputs.draft }}
         prerelease: ${{ inputs.prerelease }}
-        make_latest: ${{ !inputs.prerelease && !inputs.draft }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     

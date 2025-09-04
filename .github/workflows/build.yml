@@ -27,7 +27,7 @@ jobs:
       uses: gradle/gradle-build-action@v2
     
     - name: Cache Gradle packages
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ~/.gradle/caches
@@ -49,14 +49,14 @@ jobs:
       run: ./gradlew clean fatJar
     
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: plugin-jar
         path: build/libs/*.jar
         retention-days: 7
     
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results
