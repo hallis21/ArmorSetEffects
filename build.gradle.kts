@@ -190,7 +190,7 @@ tasks.register<Exec>("downloadPaperServer") {
         "curl",
         "-o",
         "paper-1.21.8.jar",
-        "https://api.papermc.io/v2/projects/paper/versions/1.21.8/builds/latest/downloads/paper-1.21.8-latest.jar",
+        "https://api.papermc.io/v2/projects/paper/versions/1.21.8/builds/58/downloads/paper-1.21.8-58.jar",
     )
 
     doLast {

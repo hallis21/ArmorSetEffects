@@ -236,6 +236,76 @@ class EffectManager(private val plugin: ArmorSetsPlugin) {
         return activePlayerSets.toMap()
     }
 
+    fun reEvaluateAllOnlinePlayers() {
+        try {
+            Logger.debug("Re-evaluating armor for all online players...")
+
+            val onlinePlayers = Bukkit.getOnlinePlayers().toList()
+            Logger.debug("Found ${onlinePlayers.size} online players to re-evaluate")
+
+            onlinePlayers.forEach { player ->
+                if (player.hasPermission("armorseteffects.receive")) {
+                    checkPlayerArmor(player)
+                }
+            }
+
+            Logger.debug("Completed armor re-evaluation for all online players")
+        } catch (e: Exception) {
+            Logger.error("Error during player armor re-evaluation", e)
+        }
+    }
+
+    private fun checkPlayerArmor(player: Player) {
+        try {
+            if (!player.isOnline || !player.hasPermission("armorseteffects.receive")) {
+                return
+            }
+
+            val currentArmor =
+                mapOf(
+                    com.hallis21.armorsets.models.ArmorSlot.HELMET to
+                        player.inventory.helmet?.let {
+                            com.hallis21.armorsets.models.ArmorPiece(it.type.name, com.hallis21.armorsets.models.ArmorSlot.HELMET)
+                        },
+                    com.hallis21.armorsets.models.ArmorSlot.CHESTPLATE to
+                        player.inventory.chestplate?.let {
+                            com.hallis21.armorsets.models.ArmorPiece(it.type.name, com.hallis21.armorsets.models.ArmorSlot.CHESTPLATE)
+                        },
+                    com.hallis21.armorsets.models.ArmorSlot.LEGGINGS to
+                        player.inventory.leggings?.let {
+                            com.hallis21.armorsets.models.ArmorPiece(it.type.name, com.hallis21.armorsets.models.ArmorSlot.LEGGINGS)
+                        },
+                    com.hallis21.armorsets.models.ArmorSlot.BOOTS to
+                        player.inventory.boots?.let {
+                            com.hallis21.armorsets.models.ArmorPiece(it.type.name, com.hallis21.armorsets.models.ArmorSlot.BOOTS)
+                        },
+                )
+
+            val currentActiveSet = getActiveArmorSet(player)
+            var bestMatch: ArmorSet? = null
+
+            val armorSets = plugin.armorSetManager.getArmorSetsByPriority()
+            for (armorSet in armorSets) {
+                if (armorSet.isValidFor(player) && armorSet.isComplete(currentArmor)) {
+                    bestMatch = armorSet
+                    break
+                }
+            }
+
+            if (bestMatch != currentActiveSet) {
+                if (currentActiveSet != null) {
+                    removeArmorSetEffects(player)
+                }
+
+                if (bestMatch != null) {
+                    applyArmorSetEffects(player, bestMatch)
+                }
+            }
+        } catch (e: Exception) {
+            Logger.error("Error checking player armor for ${player.name}", e)
+        }
+    }
+
     override fun toString(): String {
         return "EffectManager(activePlayers=${activePlayerSets.size}, activeEffects=${playerEffects.size})"
     }

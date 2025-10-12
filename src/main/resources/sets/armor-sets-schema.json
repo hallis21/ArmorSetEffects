@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hallis21/ArmorSetEffects/armor-sets-schema.json",
+  "title": "ArmorSetEffects JSON Schema",
+  "description": "Schema for ArmorSetEffects V2 armor set configuration files",
+  "type": "object",
+  "patternProperties": {
+    "^[a-zA-Z0-9_]+$": {
+      "$ref": "#/$defs/ArmorSet"
+    }
+  },
+  "additionalProperties": false,
+  "minProperties": 1,
+  "$defs": {
+    "ArmorSet": {
+      "type": "object",
+      "description": "An armor set configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The internal name of the armor set",
+          "minLength": 1
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name shown to players (supports MiniMessage formatting)",
+          "minLength": 1
+        },
+        "hidden": {
+          "type": "boolean",
+          "description": "Whether this armor set should be hidden from listings",
+          "default": false
+        },
+        "priority": {
+          "type": "integer",
+          "description": "Priority for overlapping armor sets (higher = more important)",
+          "default": 0
+        },
+        "permission": {
+          "type": "string",
+          "description": "Permission suffix for armorseteffects.sets.{permission}",
+          "pattern": "^[a-zA-Z0-9_.]+$"
+        },
+        "equipMessage": {
+          "type": "string",
+          "description": "Message shown when armor set is equipped (supports MiniMessage formatting)"
+        },
+        "unequipMessage": {
+          "type": "string",
+          "description": "Message shown when armor set is unequipped (supports MiniMessage formatting)"
+        },
+        "armorPieces": {
+          "type": "array",
+          "description": "List of armor pieces required for this set",
+          "items": {
+            "$ref": "#/$defs/ArmorPiece"
+          },
+          "minItems": 1,
+          "maxItems": 4
+        },
+        "permanentEffects": {
+          "type": "array",
+          "description": "Effects applied permanently while wearing the armor set",
+          "items": {
+            "$ref": "#/$defs/PermanentEffect"
+          }
+        },
+        "itemEffects": {
+          "type": "array",
+          "description": "Effects triggered by using items while wearing the armor set",
+          "items": {
+            "$ref": "#/$defs/ItemEffect"
+          }
+        }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "ArmorPiece": {
+      "type": "object",
+      "description": "A single armor piece requirement",
+      "properties": {
+        "item": {
+          "type": "string",
+          "description": "Minecraft material name for the armor piece",
+          "enum": [
+            "LEATHER_HELMET", "LEATHER_CHESTPLATE", "LEATHER_LEGGINGS", "LEATHER_BOOTS",
+            "CHAINMAIL_HELMET", "CHAINMAIL_CHESTPLATE", "CHAINMAIL_LEGGINGS", "CHAINMAIL_BOOTS",
+            "IRON_HELMET", "IRON_CHESTPLATE", "IRON_LEGGINGS", "IRON_BOOTS",
+            "GOLDEN_HELMET", "GOLDEN_CHESTPLATE", "GOLDEN_LEGGINGS", "GOLDEN_BOOTS",
+            "DIAMOND_HELMET", "DIAMOND_CHESTPLATE", "DIAMOND_LEGGINGS", "DIAMOND_BOOTS",
+            "NETHERITE_HELMET", "NETHERITE_CHESTPLATE", "NETHERITE_LEGGINGS", "NETHERITE_BOOTS",
+            "TURTLE_HELMET", "ELYTRA"
+          ]
+        },
+        "slot": {
+          "$ref": "#/$defs/ArmorSlot"
+        },
+        "metadata": {
+          "$ref": "#/$defs/ItemMetadata"
+        }
+      },
+      "required": ["item", "slot"],
+      "additionalProperties": false
+    },
+    "ArmorSlot": {
+      "type": "string",
+      "description": "Equipment slot for armor pieces",
+      "enum": ["HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS"]
+    },
+    "ItemMetadata": {
+      "type": "object",
+      "description": "Additional item metadata requirements",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "description": "Required display name for the item"
+        },
+        "lore": {
+          "type": "array",
+          "description": "Required lore lines for the item",
+          "items": {
+            "type": "string"
+          }
+        },
+        "customModelData": {
+          "type": "integer",
+          "description": "Required custom model data value",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "PermanentEffect": {
+      "type": "object",
+      "description": "A permanent potion effect applied while wearing the armor set",
+      "properties": {
+        "effectType": {
+          "$ref": "#/$defs/PotionEffectType"
+        },
+        "amplifier": {
+          "type": "integer",
+          "description": "Effect amplifier (0 = level 1, 1 = level 2, etc.)",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 255
+        },
+        "ambient": {
+          "type": "boolean",
+          "description": "Whether the effect is ambient (from beacon/conduit)",
+          "default": false
+        },
+        "particles": {
+          "type": "boolean",
+          "description": "Whether to show particles",
+          "default": true
+        },
+        "icon": {
+          "type": "boolean",
+          "description": "Whether to show the effect icon",
+          "default": true
+        }
+      },
+      "required": ["effectType"],
+      "additionalProperties": false
+    },
+    "ItemEffect": {
+      "type": "object",
+      "description": "Effects triggered by using specific items while wearing the armor set",
+      "properties": {
+        "item": {
+          "type": "string",
+          "description": "Minecraft material name for the trigger item",
+          "pattern": "^[A-Z_]+$"
+        },
+        "cooldown": {
+          "type": "integer",
+          "description": "Cooldown in seconds before the effect can be triggered again",
+          "default": 0,
+          "minimum": 0
+        },
+        "consumeItem": {
+          "type": "boolean",
+          "description": "Whether to consume the item when triggered",
+          "default": false
+        },
+        "message": {
+          "type": "string",
+          "description": "Message to show when effect is triggered (supports MiniMessage formatting)"
+        },
+        "effects": {
+          "type": "array",
+          "description": "Temporary effects to apply",
+          "items": {
+            "$ref": "#/$defs/TemporaryEffect"
+          },
+          "minItems": 1
+        }
+      },
+      "required": ["item", "effects"],
+      "additionalProperties": false
+    },
+    "TemporaryEffect": {
+      "type": "object",
+      "description": "A temporary potion effect",
+      "properties": {
+        "effectType": {
+          "$ref": "#/$defs/PotionEffectType"
+        },
+        "amplifier": {
+          "type": "integer",
+          "description": "Effect amplifier (0 = level 1, 1 = level 2, etc.)",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 255
+        },
+        "duration": {
+          "type": "integer",
+          "description": "Duration in seconds",
+          "default": 20,
+          "minimum": 1
+        },
+        "ambient": {
+          "type": "boolean",
+          "description": "Whether the effect is ambient (from beacon/conduit)",
+          "default": false
+        },
+        "particles": {
+          "type": "boolean",
+          "description": "Whether to show particles",
+          "default": true
+        },
+        "icon": {
+          "type": "boolean",
+          "description": "Whether to show the effect icon",
+          "default": true
+        }
+      },
+      "required": ["effectType"],
+      "additionalProperties": false
+    },
+    "PotionEffectType": {
+      "type": "string",
+      "description": "Minecraft potion effect type",
+      "enum": [
+        "SPEED", "SLOWNESS", "HASTE", "MINING_FATIGUE", "STRENGTH", "INSTANT_HEALTH",
+        "INSTANT_DAMAGE", "JUMP_BOOST", "JUMP", "NAUSEA", "REGENERATION", "RESISTANCE", "DAMAGE_RESISTANCE",
+        "FIRE_RESISTANCE", "WATER_BREATHING", "INVISIBILITY", "BLINDNESS",
+        "NIGHT_VISION", "HUNGER", "WEAKNESS", "POISON", "WITHER", "HEALTH_BOOST",
+        "ABSORPTION", "SATURATION", "GLOWING", "HERO_OF_THE_VILLAGE", "BAD_OMEN",
+        "CONDUIT_POWER", "DOLPHINS_GRACE", "DARKNESS", "TRIAL_OMEN", "WIND_CHARGED",
+        "WEAVING", "OOZING", "INFESTED", "OMINOUS_BOTTLE"
+      ]
+    }
+  }
+}

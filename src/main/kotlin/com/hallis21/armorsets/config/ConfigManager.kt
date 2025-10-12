@@ -1,6 +1,5 @@
 package com.hallis21.armorsets.config
 
-// import com.charleskorn.kaml.Kaml
 import com.hallis21.armorsets.ArmorSetsPlugin
 import com.hallis21.armorsets.utils.Logger
 import kotlinx.serialization.Serializable
@@ -23,8 +22,6 @@ class ConfigManager(private val plugin: ArmorSetsPlugin) {
             ignoreUnknownKeys = true
             encodeDefaults = true
         }
-
-    // private val yaml = Kaml { encodeDefaults = true }
 
     fun loadConfig() {
         try {
@@ -72,6 +69,7 @@ class ConfigManager(private val plugin: ArmorSetsPlugin) {
         saveConfig()
 
         createExampleArmorSets()
+        createSchemaFile()
     }
 
     private fun createExampleArmorSets() {
@@ -80,55 +78,81 @@ class ConfigManager(private val plugin: ArmorSetsPlugin) {
             examplesDir.mkdirs()
         }
 
-        val exampleFile = File(examplesDir, "diamond_set.yml")
+        val exampleFile = File(examplesDir, "diamond_set.json")
         if (!exampleFile.exists()) {
             val exampleContent =
                 """
-                # Example Diamond Armor Set
-                diamond_set:
-                  name: "Diamond Warrior"
-                  displayName: "Diamond Warrior Set"
-                  hidden: false
-                  priority: 10
-                  permission: "diamond"
-                  equipMessage: "<green>Diamond Warrior set equipped! You feel invincible!</green>"
-                  unequipMessage: "<red>Diamond Warrior set removed.</red>"
-
-                  armorPieces:
-                    - item: "DIAMOND_HELMET"
-                      slot: "HELMET"
-                    - item: "DIAMOND_CHESTPLATE"
-                      slot: "CHESTPLATE"
-                    - item: "DIAMOND_LEGGINGS"
-                      slot: "LEGGINGS"
-                    - item: "DIAMOND_BOOTS"
-                      slot: "BOOTS"
-
-                  permanentEffects:
-                    - effectType: "FIRE_RESISTANCE"
-                      amplifier: 0
-                      ambient: true
-                      particles: false
-                    - effectType: "DAMAGE_RESISTANCE"
-                      amplifier: 0
-                      ambient: true
-                      particles: false
-
-                  itemEffects:
-                    - item: "GOLDEN_APPLE"
-                      cooldown: 30
-                      consumeItem: true
-                      message: "<gold>Diamond Warrior power activated!</gold>"
-                      effects:
-                        - effectType: "REGENERATION"
-                          amplifier: 2
-                          duration: 10
-                        - effectType: "ABSORPTION"
-                          amplifier: 1
-                          duration: 15
+                {
+                  "${'$'}schema": "../armor-sets-schema.json",
+                  "diamond_set": {
+                    "name": "Diamond Warrior",
+                    "displayName": "Diamond Warrior Set",
+                    "hidden": false,
+                    "priority": 10,
+                    "permission": "diamond",
+                    "equipMessage": "<green>Diamond Warrior set equipped! You feel invincible!</green>",
+                    "unequipMessage": "<red>Diamond Warrior set removed.</red>",
+                    "armorPieces": [
+                      { "item": "DIAMOND_HELMET", "slot": "HELMET" },
+                      { "item": "DIAMOND_CHESTPLATE", "slot": "CHESTPLATE" },
+                      { "item": "DIAMOND_LEGGINGS", "slot": "LEGGINGS" },
+                      { "item": "DIAMOND_BOOTS", "slot": "BOOTS" }
+                    ],
+                    "permanentEffects": [
+                      {
+                        "effectType": "FIRE_RESISTANCE",
+                        "amplifier": 0,
+                        "ambient": true,
+                        "particles": false
+                      },
+                      {
+                        "effectType": "DAMAGE_RESISTANCE",
+                        "amplifier": 0,
+                        "ambient": true,
+                        "particles": false
+                      }
+                    ],
+                    "itemEffects": [
+                      {
+                        "item": "GOLDEN_APPLE",
+                        "cooldown": 30,
+                        "consumeItem": true,
+                        "message": "<gold>Diamond Warrior power activated!</gold>",
+                        "effects": [
+                          {
+                            "effectType": "REGENERATION",
+                            "amplifier": 2,
+                            "duration": 10
+                          },
+                          {
+                            "effectType": "ABSORPTION",
+                            "amplifier": 1,
+                            "duration": 15
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
                 """.trimIndent()
 
             exampleFile.writeText(exampleContent)
+        }
+    }
+
+    private fun createSchemaFile() {
+        val setsDir = File(plugin.dataFolder, "sets")
+        val schemaFile = File(setsDir, "armor-sets-schema.json")
+        
+        if (!schemaFile.exists()) {
+            try {
+                plugin.getResource("sets/armor-sets-schema.json")?.use { inputStream ->
+                    schemaFile.writeBytes(inputStream.readAllBytes())
+                    Logger.debug("Created armor sets JSON schema file")
+                }
+            } catch (e: Exception) {
+                Logger.warn("Could not create armor sets schema file", e)
+            }
         }
     }
 
@@ -184,8 +208,8 @@ class ConfigManager(private val plugin: ArmorSetsPlugin) {
 
         Logger.debug("Migrating armor set: ${v1File.nameWithoutExtension}")
 
-        val outputFile = File(outputDir, "${v1File.nameWithoutExtension}.yml")
-        outputFile.writeText("# Migrated from V1: ${v1File.name}\n# TODO: Review and adjust as needed\n\n$v1Content")
+        val outputFile = File(outputDir, "${v1File.nameWithoutExtension}.json")
+        outputFile.writeText(v1Content)
 
         Logger.debug("Migrated ${v1File.name} -> ${outputFile.name}")
     }

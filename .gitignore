@@ -49,3 +49,7 @@ buildNumber.properties
 
 # virtual machine crash logs
 hs_err_pid*
+
+
+#TypeScript
+**/node_modules

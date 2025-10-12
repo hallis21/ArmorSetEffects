@@ -1,6 +1,5 @@
 package com.hallis21.armorsets.services
 
-// import com.charleskorn.kaml.Kaml
 import com.hallis21.armorsets.ArmorSetsPlugin
 import com.hallis21.armorsets.models.ArmorSet
 import com.hallis21.armorsets.utils.Logger
@@ -16,8 +15,6 @@ class ArmorSetManager(private val plugin: ArmorSetsPlugin) {
             ignoreUnknownKeys = true
             encodeDefaults = true
         }
-
-    // private val yaml = Kaml { encodeDefaults = true }
 
     fun loadArmorSets() {
         try {
@@ -61,30 +58,10 @@ class ArmorSetManager(private val plugin: ArmorSetsPlugin) {
                 file.isDirectory -> {
                     loadFromDirectoryRecursive(file)
                 }
-                file.isFile && (file.extension.equals("yml", true) || file.extension.equals("yaml", true)) -> {
-                    loadYamlFile(file)
-                }
                 file.isFile && file.extension.equals("json", true) -> {
                     loadJsonFile(file)
                 }
             }
-        }
-    }
-
-    private fun loadYamlFile(file: File) {
-        try {
-            Logger.debug("Loading YAML armor set file: ${file.name}")
-
-            val content = file.readText()
-            val armorSetMap = json.decodeFromString<Map<String, ArmorSet>>(content)
-
-            for ((key, armorSet) in armorSetMap) {
-                val finalArmorSet = armorSet.copy(name = armorSet.name.ifEmpty { key })
-                armorSets[key] = finalArmorSet
-                Logger.debug("Loaded armor set: $key (priority: ${finalArmorSet.priority})")
-            }
-        } catch (e: Exception) {
-            Logger.error("Failed to load YAML armor set file: ${file.name}", e)
         }
     }
 

@@ -3,6 +3,7 @@ package com.hallis21.armorsets
 import com.hallis21.armorsets.commands.ArmorCommandManager
 import com.hallis21.armorsets.config.ConfigManager
 import com.hallis21.armorsets.listeners.ArmorEquipListener
+import com.hallis21.armorsets.listeners.ItemEffectListener
 import com.hallis21.armorsets.services.ArmorSetManager
 import com.hallis21.armorsets.services.EffectManager
 import com.hallis21.armorsets.utils.Logger
@@ -74,6 +75,7 @@ class ArmorSetsPlugin : JavaPlugin() {
         Logger.debug("Registering event listeners...")
 
         server.pluginManager.registerEvents(ArmorEquipListener(this), this)
+        server.pluginManager.registerEvents(ItemEffectListener(this), this)
 
         Logger.debug("Event listeners registered")
     }
@@ -103,6 +105,9 @@ class ArmorSetsPlugin : JavaPlugin() {
             effectManager.removeAllEffects()
             configManager.loadConfig()
             armorSetManager.loadArmorSets()
+
+            // Re-evaluate all online players after reload to apply new configurations
+            effectManager.reEvaluateAllOnlinePlayers()
 
             Logger.info("ArmorSetEffects V2 reloaded successfully!")
             true
