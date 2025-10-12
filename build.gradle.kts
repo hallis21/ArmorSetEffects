@@ -11,7 +11,7 @@ version = "2.0.3"
 
 dependencies {
     // Paper API
-    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
 
     // Kotlin standard library
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
@@ -189,13 +189,13 @@ tasks.register<Exec>("downloadPaperServer") {
     commandLine(
         "curl",
         "-o",
-        "paper-1.21.8.jar",
-        "https://api.papermc.io/v2/projects/paper/versions/1.21.8/builds/58/downloads/paper-1.21.8-58.jar",
+        "paper-1.21.10.jar",
+        "https://api.papermc.io/v2/projects/paper/versions/1.21.10/builds/69/downloads/paper-1.21.10-69.jar",
     )
 
     doLast {
         println("Paper server downloaded to test-server/")
-        println("Run 'java -jar paper-1.21.8.jar' in the test-server directory to start")
+        println("Run 'java -jar paper-1.21.10.jar' in the test-server directory to start")
     }
 }
 

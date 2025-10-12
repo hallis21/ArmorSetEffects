@@ -58,7 +58,7 @@ class ArmorSetManager(private val plugin: ArmorSetsPlugin) {
                 file.isDirectory -> {
                     loadFromDirectoryRecursive(file)
                 }
-                file.isFile && file.extension.equals("json", true) -> {
+                file.isFile && file.extension.equals("json", true) && !file.name.contains("schema") -> {
                     loadJsonFile(file)
                 }
             }

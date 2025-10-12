@@ -257,38 +257,35 @@ class EffectManager(private val plugin: ArmorSetsPlugin) {
 
     private fun checkPlayerArmor(player: Player) {
         try {
+            Logger.debug("checkPlayerArmor called for ${player.name}")
             if (!player.isOnline || !player.hasPermission("armorseteffects.receive")) {
+                Logger.debug("  Player not online or no permission")
                 return
             }
 
             val currentArmor =
                 mapOf(
-                    com.hallis21.armorsets.models.ArmorSlot.HELMET to
-                        player.inventory.helmet?.let {
-                            com.hallis21.armorsets.models.ArmorPiece(it.type.name, com.hallis21.armorsets.models.ArmorSlot.HELMET)
-                        },
-                    com.hallis21.armorsets.models.ArmorSlot.CHESTPLATE to
-                        player.inventory.chestplate?.let {
-                            com.hallis21.armorsets.models.ArmorPiece(it.type.name, com.hallis21.armorsets.models.ArmorSlot.CHESTPLATE)
-                        },
-                    com.hallis21.armorsets.models.ArmorSlot.LEGGINGS to
-                        player.inventory.leggings?.let {
-                            com.hallis21.armorsets.models.ArmorPiece(it.type.name, com.hallis21.armorsets.models.ArmorSlot.LEGGINGS)
-                        },
-                    com.hallis21.armorsets.models.ArmorSlot.BOOTS to
-                        player.inventory.boots?.let {
-                            com.hallis21.armorsets.models.ArmorPiece(it.type.name, com.hallis21.armorsets.models.ArmorSlot.BOOTS)
-                        },
+                    com.hallis21.armorsets.models.ArmorSlot.HELMET to player.inventory.helmet,
+                    com.hallis21.armorsets.models.ArmorSlot.CHESTPLATE to player.inventory.chestplate,
+                    com.hallis21.armorsets.models.ArmorSlot.LEGGINGS to player.inventory.leggings,
+                    com.hallis21.armorsets.models.ArmorSlot.BOOTS to player.inventory.boots,
                 )
+
+            Logger.debug("  Current armor: HELMET=${currentArmor[com.hallis21.armorsets.models.ArmorSlot.HELMET]?.type}")
 
             val currentActiveSet = getActiveArmorSet(player)
             var bestMatch: ArmorSet? = null
 
             val armorSets = plugin.armorSetManager.getArmorSetsByPriority()
+            Logger.debug("  Checking ${armorSets.size} armor sets")
             for (armorSet in armorSets) {
-                if (armorSet.isValidFor(player) && armorSet.isComplete(currentArmor)) {
+                Logger.debug("  Checking set: ${armorSet.name}")
+                if (armorSet.isValidFor(player) && armorSet.isCompleteWithItems(currentArmor)) {
+                    Logger.debug("    -> MATCH!")
                     bestMatch = armorSet
                     break
+                } else {
+                    Logger.debug("    -> No match (valid: ${armorSet.isValidFor(player)})")
                 }
             }
 

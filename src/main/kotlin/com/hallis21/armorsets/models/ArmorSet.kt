@@ -48,6 +48,21 @@ data class ArmorSet(
         }
     }
 
+    fun isCompleteWithItems(equippedItems: Map<ArmorSlot, org.bukkit.inventory.ItemStack?>): Boolean {
+        com.hallis21.armorsets.utils.Logger.debug("Checking armor set '$name' with items")
+        val result =
+            armorPieces.all { requiredPiece ->
+                val itemStack = equippedItems[requiredPiece.slot]
+                val matches = requiredPiece.matches(itemStack)
+                com.hallis21.armorsets.utils.Logger.debug(
+                    "  Slot ${requiredPiece.slot}: ${itemStack?.type ?: "EMPTY"} - Matches: $matches",
+                )
+                matches
+            }
+        com.hallis21.armorsets.utils.Logger.debug("Armor set '$name' complete: $result")
+        return result
+    }
+
     override fun toString(): String {
         return "ArmorSet(name='$name', priority=$priority, pieces=${armorPieces.size})"
     }

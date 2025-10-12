@@ -143,7 +143,7 @@ class ConfigManager(private val plugin: ArmorSetsPlugin) {
     private fun createSchemaFile() {
         val setsDir = File(plugin.dataFolder, "sets")
         val schemaFile = File(setsDir, "armor-sets-schema.json")
-        
+
         if (!schemaFile.exists()) {
             try {
                 plugin.getResource("sets/armor-sets-schema.json")?.use { inputStream ->
@@ -151,7 +151,7 @@ class ConfigManager(private val plugin: ArmorSetsPlugin) {
                     Logger.debug("Created armor sets JSON schema file")
                 }
             } catch (e: Exception) {
-                Logger.warn("Could not create armor sets schema file", e)
+                Logger.warn("Could not create armor sets schema file: ${e.message}")
             }
         }
     }

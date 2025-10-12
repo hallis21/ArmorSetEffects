@@ -3,7 +3,6 @@ package com.hallis21.armorsets.listeners
 import com.hallis21.armorsets.ArmorSetsPlugin
 import com.hallis21.armorsets.events.ArmorEquipEvent
 import com.hallis21.armorsets.events.EquipMethod
-import com.hallis21.armorsets.models.ArmorPiece
 import com.hallis21.armorsets.models.ArmorSlot
 import com.hallis21.armorsets.utils.Logger
 import org.bukkit.Bukkit
@@ -286,22 +285,10 @@ class ArmorEquipListener(private val plugin: ArmorSetsPlugin) : Listener {
 
             val currentArmor =
                 mapOf(
-                    ArmorSlot.HELMET to
-                        player.inventory.helmet?.let {
-                            ArmorPiece(it.type.name, ArmorSlot.HELMET)
-                        },
-                    ArmorSlot.CHESTPLATE to
-                        player.inventory.chestplate?.let {
-                            ArmorPiece(it.type.name, ArmorSlot.CHESTPLATE)
-                        },
-                    ArmorSlot.LEGGINGS to
-                        player.inventory.leggings?.let {
-                            ArmorPiece(it.type.name, ArmorSlot.LEGGINGS)
-                        },
-                    ArmorSlot.BOOTS to
-                        player.inventory.boots?.let {
-                            ArmorPiece(it.type.name, ArmorSlot.BOOTS)
-                        },
+                    ArmorSlot.HELMET to player.inventory.helmet,
+                    ArmorSlot.CHESTPLATE to player.inventory.chestplate,
+                    ArmorSlot.LEGGINGS to player.inventory.leggings,
+                    ArmorSlot.BOOTS to player.inventory.boots,
                 )
 
             val currentActiveSet = plugin.effectManager.getActiveArmorSet(player)
@@ -309,7 +296,7 @@ class ArmorEquipListener(private val plugin: ArmorSetsPlugin) : Listener {
 
             val armorSets = plugin.armorSetManager.getArmorSetsByPriority()
             for (armorSet in armorSets) {
-                if (armorSet.isValidFor(player) && armorSet.isComplete(currentArmor)) {
+                if (armorSet.isValidFor(player) && armorSet.isCompleteWithItems(currentArmor)) {
                     bestMatch = armorSet
                     break
                 }

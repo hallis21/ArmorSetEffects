@@ -86,20 +86,40 @@ data class ItemMetadata(
     }
 
     fun matches(itemMeta: ItemMeta?): Boolean {
-        if (itemMeta == null) return true
+        // If we require metadata but item has none, it doesn't match
+        if (itemMeta == null) {
+            val result = displayName == null && lore == null && customModelData == null
+            com.hallis21.armorsets.utils.Logger.debug(
+                "ItemMeta null. Req: name=$displayName, lore=$lore, model=$customModelData. Match: $result",
+            )
+            return result
+        }
+
+        val actualDisplayName =
+            itemMeta.displayName()?.let { component ->
+                net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(component)
+            }
+        val actualLore =
+            itemMeta.lore()?.map { component ->
+                net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(component)
+            }
 
         val nameMatches =
             displayName?.let { expected ->
-                itemMeta.displayName()?.let { actual ->
-                    expected == actual.toString()
-                } ?: false
+                val matches = actualDisplayName == expected
+                com.hallis21.armorsets.utils.Logger.debug(
+                    "Name check - Expected: '$expected', Actual: '$actualDisplayName', Match: $matches",
+                )
+                matches
             } ?: true
 
         val loreMatches =
             lore?.let { expectedLore ->
-                itemMeta.lore()?.let { actualLore ->
-                    expectedLore == actualLore.map { it.toString() }
-                } ?: false
+                val matches = actualLore == expectedLore
+                com.hallis21.armorsets.utils.Logger.debug(
+                    "Lore check - Expected: $expectedLore, Actual: $actualLore, Match: $matches",
+                )
+                matches
             } ?: true
 
         val modelDataMatches =
@@ -107,7 +127,11 @@ data class ItemMetadata(
                 itemMeta.hasCustomModelData() && itemMeta.customModelData == expected
             } ?: true
 
-        return nameMatches && loreMatches && modelDataMatches
+        val result = nameMatches && loreMatches && modelDataMatches
+        com.hallis21.armorsets.utils.Logger.debug(
+            "Overall match: $result (name: $nameMatches, lore: $loreMatches, model: $modelDataMatches)",
+        )
+        return result
     }
 
     fun apply(itemMeta: ItemMeta?): ItemMeta? {
